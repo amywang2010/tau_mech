@@ -32,6 +32,36 @@ stages.
   literature positions. `HIP` (protonated His) in PED00422 is normalized to
   His.
 
+### Getting the raw data (required for the full pipeline, not for the tests)
+
+The three raw PED archives are **not** in this repository (≈140 MB total;
+PED00422 alone is 107 MB, over GitHub's per-file limit, and the data is
+re-published from the Protein Ensemble Database). Download them from the PED
+entry pages below and verify the SHA-256 digests recorded in
+`outputs/provenance.json`:
+
+| Entry | Archive | Size | PED entry page |
+|---|---|---|---|
+| PED00422 | `PED00422_ensembles.tar.gz` | 107 MB | https://proteinensemble.org/entries/PED00422/ |
+| PED00192 | `PED00192_ensembles.tar.gz` | 1.5 MB | https://proteinensemble.org/entries/PED00192/ |
+| PED00443 | `PED00443_ensembles.tar.gz` | 33 MB | https://proteinensemble.org/entries/PED00443/ |
+
+Place the `*.tar.gz` files one directory level **above** the repository root
+(the default `--data-dir ..`), or point the pipeline at them explicitly with
+`--data-dir /path/to/data`:
+
+```
+parent-dir/
+├── tau_mech/                 # this repository
+├── PED00422_ensembles.tar.gz
+├── PED00192_ensembles.tar.gz
+└── PED00443_ensembles.tar.gz
+```
+
+The 55-test suite does **not** need the raw data (tests build their own
+fixtures), so `pip install -r requirements.txt && pytest tests/` works
+immediately after cloning.
+
 ## 2. Setup
 
 ```
