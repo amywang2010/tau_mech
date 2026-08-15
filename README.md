@@ -40,9 +40,11 @@ python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt
 ```
 
-Python 3.14.6; numpy 2.5.1, scipy 1.18.0, pandas 3.0.5, pytest (tested
-2026-08-02). `requirements.txt` pins minimums; the exact resolved versions are
-in `outputs/config_used.json` and can be locked with `pip freeze`.
+Python 3.14.6; numpy 2.5.1, scipy 1.18.0, pandas 3.0.5, matplotlib 3.11.1,
+scikit-learn 1.9.0, torch 2.13.0 (CPU), torch-geometric 2.8.0, pytest
+(tested 2026-08-02; GNN stack 2026-08-15). `requirements.txt` pins minimums;
+the exact resolved versions are in `outputs/config_used.json` and can be
+locked with `pip freeze`.
 
 ## 3. Usage
 

@@ -1,6 +1,15 @@
-# Phase 1 (data preprocessing) dependencies.
-# Python 3.14, tested with the versions below (pip-resolved 2026-08-02).
+# tau_mech dependencies (all phases).
+# Python 3.14; core versions pip-resolved 2026-08-02.
+#
+# Phases 1-2 (preprocessing, EDA), 3 (SPH), and the test suite:
 numpy>=2.5
 scipy>=1.18
 pandas>=3.0
+matplotlib>=3.8
+scikit-learn>=1.4
 pytest>=8.0
+#
+# Phases 4-5 (graph neural networks). torch-geometric must match the
+# installed torch major version; the CPU build is sufficient for this study.
+torch>=2.0
+torch-geometric>=2.5
