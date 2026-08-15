@@ -20,3 +20,6 @@ Thumbs.db
 
 # Local scratch (raw PED archives live OUTSIDE this repo; see README §1)
 *.tar.gz
+*.zip
+*.7z
+*.rar
