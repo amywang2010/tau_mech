@@ -1,0 +1,19 @@
+config              D0   D_min   D_max  t_min  t_max    span com_drift
+Traceback (most recent call last):
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\diag_classify_osc.py", line 107, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\diag_classify_osc.py", line 96, in main
+    r = trace_config(name, params, steps=a.steps)
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\diag_classify_osc.py", line 48, in trace_config
+    step(state, params, dt)
+    ~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\..\tau_mech\sph.py", line 480, in step
+    pairs, d, e = build_pairs(state.pos, params.h,
+                  ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+                              x_period=state.domain[2] - state.domain[0])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\..\tau_mech\sph.py", line 239, in build_pairs
+    tree = cKDTree(pos, boxsize=boxsize)
+  File "scipy/spatial/_ckdtree.pyx", line 613, in scipy.spatial._ckdtree.cKDTree.__init__
+ValueError: Some input data are greater than the size of the periodic box.

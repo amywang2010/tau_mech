@@ -1,0 +1,10 @@
+Sweep viscosities: mu_solvent=1.0 mu_droplet=10.0 (lambda=10.0)
+=== Laplace calibration ===
+  [reused outputs\sph\laplace_calibration.json]
+  R=5.0: dP=0.1980
+  R=6.0: dP=0.1617
+  R=7.0: dP=0.1350
+  sigma_eff=0.9684  linearity=1.0000  usable=True
+=== Droplet-in-shear sweep: gamma_dot = [0.0, 0.001, 0.003, 0.01, 0.03, 0.1] ===
+  [sph] t_flow~271  t_char~31  shear_phase=406 units (50765 steps)
+  [sph] gamma_dot=0.0000 (nominal), Ca_nom=0.000  Ca_meas(final)=-0.007  D: 0.009 -> 0.078 (plateau fit 0.078 [NOT-converged], a=10.494, tau=1047.3, R2=0.973)

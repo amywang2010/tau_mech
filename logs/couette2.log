@@ -1,0 +1,2 @@
+layers=4 steps=6000: full R2=0.9910 ratio=0.8811 | central R2=0.9924 ratio=0.8714 | slip=0.104 | t/tau=3.3
+layers=2 steps=15000: full R2=0.9741 ratio=0.8437 | central R2=0.9495 ratio=0.8526 | slip=0.308 | t/tau=8.2

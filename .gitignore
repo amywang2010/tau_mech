@@ -1,0 +1,22 @@
+# Python virtual environment (machine-specific, reproducible via requirements.txt)
+.venv/
+venv/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Editors / IDEs / OS
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# Agent tooling
+.agents/
+
+# Local scratch (raw PED archives live OUTSIDE this repo; see README §1)
+*.tar.gz

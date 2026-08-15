@@ -1,0 +1,8 @@
+sigma_surf=0.0  A_surf=10.0  B_surf=0.0  allow_neg_p=True  shepard=1.0
+dP = -0.0453   (Laplace expectation +sigma/R = +0.0000)
+pin = 0.0076   pout = 0.0529   n_samples = 44
+droplet rho = 1.0002  solvent rho = 0.9999
+clumping: frac(NN<0.35) = 24.43%  NN median = 0.4505  n_droplet = 131
+nan = 0
+SIGN: WRONG (expanding, dP<0) - flip sign in compute_surface_force
+CLUMP: FAIL (droplet clumped)

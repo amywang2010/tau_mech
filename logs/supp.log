@@ -1,0 +1,6 @@
+[1] GCN, sequential backbone edges only (no spatial contacts)
+    test PR-AUC=0.7908 ROC=0.9940 F1=0.8148 (best epoch 34)
+[2] GAT with edge attributes (distance, seq_sep, is_spatial)
+    test PR-AUC=0.9916 ROC=0.9998 F1=0.9500 (best epoch 100)
+
+Done in 15.2 min -> outputs\gnn/supplement.json

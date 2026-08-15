@@ -1,0 +1,10 @@
+C:\Users\Okapi\Downloads\PED Files\tau_mech\tau_mech\sph.py:821: RankWarning: Polyfit may be poorly conditioned
+  slope, _ = np.polyfit(xs, ys, 1)
+C:\Users\Okapi\Downloads\PED Files\tau_mech\.venv\Lib\site-packages\numpy\lib\_function_base_impl.py:3028: RuntimeWarning: Degrees of freedom <= 0 for slice
+  c = cov(x, y, rowvar, dtype=dtype)
+C:\Users\Okapi\Downloads\PED Files\tau_mech\.venv\Lib\site-packages\numpy\lib\_function_base_impl.py:2901: RuntimeWarning: divide by zero encountered in divide
+  c *= np.true_divide(1, fact)
+C:\Users\Okapi\Downloads\PED Files\tau_mech\.venv\Lib\site-packages\numpy\lib\_function_base_impl.py:2901: RuntimeWarning: invalid value encountered in multiply
+  c *= np.true_divide(1, fact)
+R=6: dP=0.1663  pin=0.1084  pout=-0.0579  n_samples=10  (expect dP ~ 1/6 = 0.1667)
+sigma_eff = dP*R = 0.9980

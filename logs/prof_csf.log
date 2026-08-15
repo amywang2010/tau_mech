@@ -1,0 +1,29 @@
+N=3990  R=3.0  sigma=1.0  r_rep=0.45  domain=(0.0,0.0,36,22)
+  r       P(r)     rho(r)
+   0.38   0.2629  1.0025
+   0.62   0.3041  1.0029
+   0.88   0.2191  1.0021
+   1.12   0.2639  1.0025
+   1.38   0.2097  1.0020
+   1.62   0.2377  1.0023
+   1.88   0.1827  1.0017
+   2.12   0.1982  1.0019
+   2.38   0.1713  1.0016
+   2.62   0.1195  1.0011
+   2.88   0.1214  1.0011
+   3.12   0.1003  1.0009
+   3.38   0.0934  1.0009
+   3.62   0.0907  1.0008
+   3.88   0.0774  1.0007
+   4.12   0.0926  1.0009
+   4.38   0.0593  1.0005
+   4.62   0.0761  1.0007
+   4.88   0.0639  1.0006
+Traceback (most recent call last):
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\diag_radial_profile.py", line 88, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\diag_radial_profile.py", line 80, in main
+    print(f"  center P (r<1):   {pm[c].mean():.4f}")
+                                 ~~^^^
+IndexError: boolean index did not match indexed array along axis 0; size of axis is 19 but size of corresponding boolean axis is 20

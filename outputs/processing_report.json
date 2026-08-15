@@ -1,0 +1,200 @@
+[
+  {
+    "ensemble_id": "PED00422",
+    "construct": "Tau-441 (2N4R, full-length)",
+    "method": "IDPConformerGenerator (Teixeira et al., 2022, J. Phys. Chem. A)",
+    "notes": "Computational conformer pool; no experimental restraints used.",
+    "n_models_expected": 1000,
+    "n_models_processed": 1000,
+    "n_residues": 441,
+    "tau_offset": 0,
+    "motif_spans_tau_numbering": {
+      "VQIINK": [
+        275,
+        280
+      ],
+      "VQIVYK": [
+        306,
+        311
+      ]
+    },
+    "processed_seconds": 4646.8,
+    "graph_config": {
+      "edge_cutoff": 5.0,
+      "add_sequential": true,
+      "seq_adjacency": 2
+    },
+    "sasa": {
+      "probe_radius": 1.4,
+      "n_probe_points": 480,
+      "vdw": "Chothia/NACCESS",
+      "heavy_only": true
+    },
+    "statistics": {
+      "rg_mass_weighted": {
+        "mean": 67.64387083550905,
+        "std": 14.646687337010201
+      },
+      "rg_equal_weight": {
+        "mean": 67.58487879525954,
+        "std": 14.619037561946064
+      },
+      "end_to_end": {
+        "mean": 158.90432979106666,
+        "std": 61.21482440747245
+      },
+      "apr1_vqiink_mean_rsa": {
+        "mean": 0.5474419593811035,
+        "std": 0.08598708361387253
+      },
+      "apr2_vqivyk_mean_rsa": {
+        "mean": 0.6149665713310242,
+        "std": 0.07620672881603241
+      },
+      "n_edges": {
+        "mean": 1344.912,
+        "std": 43.63088649110857
+      },
+      "mean_degree": {
+        "mean": 6.099374149659864,
+        "std": 0.19787250109346288
+      },
+      "graph_density": {
+        "mean": 0.01386221397649969,
+        "std": 0.0004497102297578702
+      }
+    }
+  },
+  {
+    "ensemble_id": "PED00192",
+    "construct": "K18 (M243-E372)",
+    "method": "Bayesian reweighted MD (Fisher, Huang & Stultz, 2010, PLoS Comput. Biol.)",
+    "notes": "Experimentally constrained ensemble (NMR RDC, chemical shifts, SAXS). Bayesian weights are not distributed with the PDB file.",
+    "n_models_expected": 75,
+    "n_models_processed": 75,
+    "n_residues": 130,
+    "tau_offset": 242,
+    "motif_spans_tau_numbering": {
+      "VQIINK": [
+        275,
+        280
+      ],
+      "VQIVYK": [
+        306,
+        311
+      ]
+    },
+    "processed_seconds": 87.9,
+    "graph_config": {
+      "edge_cutoff": 5.0,
+      "add_sequential": true,
+      "seq_adjacency": 2
+    },
+    "sasa": {
+      "probe_radius": 1.4,
+      "n_probe_points": 480,
+      "vdw": "Chothia/NACCESS",
+      "heavy_only": true
+    },
+    "statistics": {
+      "rg_mass_weighted": {
+        "mean": 37.54452323805634,
+        "std": 10.550930644661333
+      },
+      "rg_equal_weight": {
+        "mean": 37.520612582441686,
+        "std": 10.552069986538559
+      },
+      "end_to_end": {
+        "mean": 85.08015450725615,
+        "std": 37.666667160353285
+      },
+      "apr1_vqiink_mean_rsa": {
+        "mean": 0.5856599807739258,
+        "std": 0.07384486496448517
+      },
+      "apr2_vqivyk_mean_rsa": {
+        "mean": 0.5988826751708984,
+        "std": 0.08505852520465851
+      },
+      "n_edges": {
+        "mean": 334.2266666666667,
+        "std": 30.15452352282968
+      },
+      "mean_degree": {
+        "mean": 5.1419487179487176,
+        "std": 0.46391574650507206
+      },
+      "graph_density": {
+        "mean": 0.039860067580997804,
+        "std": 0.0035962460969385436
+      }
+    }
+  },
+  {
+    "ensemble_id": "PED00443",
+    "construct": "K18 (M243-E372)",
+    "method": "idpGAN (Janson, Valdes-Garcia, Heo & Feig, 2023, Nat. Commun. 14:774)",
+    "notes": "Generative ML ensemble derived from PED00192; no experimental data folded in during generation.",
+    "n_models_expected": 1000,
+    "n_models_processed": 1000,
+    "n_residues": 130,
+    "tau_offset": 242,
+    "motif_spans_tau_numbering": {
+      "VQIINK": [
+        275,
+        280
+      ],
+      "VQIVYK": [
+        306,
+        311
+      ]
+    },
+    "processed_seconds": 1133.9,
+    "graph_config": {
+      "edge_cutoff": 5.0,
+      "add_sequential": true,
+      "seq_adjacency": 2
+    },
+    "sasa": {
+      "probe_radius": 1.4,
+      "n_probe_points": 480,
+      "vdw": "Chothia/NACCESS",
+      "heavy_only": true
+    },
+    "statistics": {
+      "rg_mass_weighted": {
+        "mean": 27.784147100590918,
+        "std": 7.117234479411355
+      },
+      "rg_equal_weight": {
+        "mean": 27.770579845296254,
+        "std": 7.111538327442243
+      },
+      "end_to_end": {
+        "mean": 56.342390198387164,
+        "std": 28.948651097988837
+      },
+      "apr1_vqiink_mean_rsa": {
+        "mean": 0.6169676780700684,
+        "std": 0.11191455274820328
+      },
+      "apr2_vqivyk_mean_rsa": {
+        "mean": 0.604286253452301,
+        "std": 0.11294721812009811
+      },
+      "n_edges": {
+        "mean": 349.233,
+        "std": 30.292089908093168
+      },
+      "mean_degree": {
+        "mean": 5.372815384615385,
+        "std": 0.4660321524322026
+      },
+      "graph_density": {
+        "mean": 0.04164973166368515,
+        "std": 0.0036126523444356792
+      }
+    }
+  }
+]

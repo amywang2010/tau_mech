@@ -1,0 +1,26 @@
+==========================================================================
+Phase 2 EDA summary
+==========================================================================
+PED00422: n=1000  Rg=67.6+/-14.6 A  e2e=158.9 A  APR1 rSA=0.286  APR2 rSA=0.321  deg=6.10
+PED00192: n=75  Rg=37.5+/-10.6 A  e2e=85.1 A  APR1 rSA=0.344  APR2 rSA=0.334  deg=5.14
+PED00443: n=1000  Rg=27.8+/-7.1 A  e2e=56.3 A  APR1 rSA=0.404  APR2 rSA=0.404  deg=5.37
+--- pairwise comparisons (KS p / Cohen's d) ---
+radius_of_gyration         PED00422 vs PED00192: KS_p=3.15e-51 d=+2.09
+radius_of_gyration         PED00422 vs PED00443: KS_p=0.00e+00 d=+3.46
+radius_of_gyration         PED00192 vs PED00443: KS_p=1.67e-15 d=+1.32
+end_to_end                 PED00422 vs PED00192: KS_p=4.91e-19 d=+1.23
+end_to_end                 PED00422 vs PED00443: KS_p=2.35e-259 d=+2.14
+end_to_end                 PED00192 vs PED00443: KS_p=2.68e-09 d=+0.97
+apr1_vqiink_mean_rsa       PED00422 vs PED00192: KS_p=2.50e-16 d=-1.18
+apr1_vqiink_mean_rsa       PED00422 vs PED00443: KS_p=0.00e+00 d=-1.95
+apr1_vqiink_mean_rsa       PED00192 vs PED00443: KS_p=1.59e-15 d=-0.88
+apr2_vqivyk_mean_rsa       PED00422 vs PED00192: KS_p=1.77e-02 d=-0.30
+apr2_vqivyk_mean_rsa       PED00422 vs PED00443: KS_p=0.00e+00 d=-1.38
+apr2_vqivyk_mean_rsa       PED00192 vs PED00443: KS_p=5.15e-24 d=-0.97
+mean_degree                PED00422 vs PED00192: KS_p=2.24e-56 d=+4.22
+mean_degree                PED00422 vs PED00443: KS_p=2.31e-273 d=+2.03
+mean_degree                PED00192 vs PED00443: KS_p=1.25e-03 d=-0.50
+graph_density              PED00422 vs PED00192: KS_p=3.08e-117 d=-24.87
+graph_density              PED00422 vs PED00443: KS_p=0.00e+00 d=-10.79
+graph_density              PED00192 vs PED00443: KS_p=1.25e-03 d=-0.50
+figures -> outputs\figures\fig_rg_distribution.png

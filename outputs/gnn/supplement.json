@@ -1,0 +1,38 @@
+{
+  "gcn_no_spatial_edges": {
+    "test": {
+      "pr_auc": 0.7908272283272284,
+      "roc_auc": 0.993978243978244,
+      "threshold": 0.9284421801567078,
+      "precision": 0.7333333333333333,
+      "recall": 0.9166666666666666,
+      "f1": 0.8148148148143209,
+      "n_pos": 1800,
+      "n_neg": 64350
+    },
+    "best_epoch": 34
+  },
+  "gat_edge_attr": {
+    "test": {
+      "pr_auc": 0.9916482984466611,
+      "roc_auc": 0.9997522748856084,
+      "threshold": 0.991134524345398,
+      "precision": 0.9770992366412213,
+      "recall": 0.9244444444444444,
+      "f1": 0.9500428204391235,
+      "n_pos": 1800,
+      "n_neg": 64350
+    },
+    "best_epoch": 100
+  },
+  "comparison_pr_auc": {
+    "GCN (full)": 0.903,
+    "MLP (no graph)": 0.7929,
+    "GraphSAGE": 0.9997,
+    "GAT (topology)": 0.9366,
+    "GCN no-spatial": 0.7908272283272284,
+    "GAT + edge attrs": 0.9916482984466611
+  },
+  "wall_time_s": 913.810760974884,
+  "note": "Supplement to the main GNN run. 'no_edge_attr' in the main run was vacuous (the GNN forwards never consume edge_attr); the meaningful structural ablation is no_spatial_edges. GAT_edge additionally tests whether edge distance information changes APR classification."
+}

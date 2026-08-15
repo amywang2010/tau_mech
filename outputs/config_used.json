@@ -1,0 +1,44 @@
+{
+  "data_dir": "..",
+  "output_dir": "outputs",
+  "heavy_only": true,
+  "with_occupancy": false,
+  "probe_radius": 1.4,
+  "n_probe_points": 480,
+  "contact_cutoff": 5.0,
+  "neighbor_cutoff": 8.0,
+  "graph": {
+    "edge_cutoff": 5.0,
+    "add_sequential": true,
+    "seq_adjacency": 2
+  },
+  "ensemble_ids": null,
+  "n_models": null,
+  "start_at": 0,
+  "rsa_reference": {
+    "source": "Tien M.Z. et al. 2013, PLoS ONE 8(11):e80635; Table 1 THEORETICAL scale, ALLOWED Ramachandran region (Gly-X-Gly tripeptides, Lee-Richards/DSSP, probe 1.4 A)",
+    "max_asa_angstrom2": {
+      "A": 129.0,
+      "R": 274.0,
+      "N": 195.0,
+      "D": 193.0,
+      "C": 167.0,
+      "Q": 225.0,
+      "E": 223.0,
+      "G": 104.0,
+      "H": 224.0,
+      "I": 197.0,
+      "L": 201.0,
+      "K": 236.0,
+      "M": 224.0,
+      "F": 240.0,
+      "P": 159.0,
+      "S": 155.0,
+      "T": 172.0,
+      "W": 285.0,
+      "Y": 263.0,
+      "V": 174.0,
+      "X": 202.0
+    }
+  }
+}

@@ -1,0 +1,6 @@
+A_surf=10.0  B_surf=20.0  mu_droplet=5.0
+  R=3.0: dP=0.7875 (pin=0.798 pout=0.011) nan=0 rho[0.712,1.075] [943s]
+  R=4.0: dP=1.0148 (pin=1.030 pout=0.015) nan=0 rho[0.712,1.063] [415s]
+  R=5.0: dP=1.3122 (pin=1.337 pout=0.024) nan=0 rho[0.732,1.045] [374s]
+  -> sigma fit=-3.8121  linearity(dP vs 1/R)=-0.9758
+  DIAG: NOT USABLE - adjust A/B (or check stability)

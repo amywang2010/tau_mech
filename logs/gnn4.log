@@ -1,0 +1,6 @@
+Loading graphs ...
+  PED00422: 1000 graphs, 12000 APR-positive node-labels
+  PED00192: 75 graphs, 900 APR-positive node-labels
+  PED00443: 1000 graphs, 12000 APR-positive node-labels
+
+[A] Main experiments: train on PED00422 graph-level splits

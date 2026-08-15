@@ -1,0 +1,45 @@
+{
+  "description": "Data provenance for the Tau mechanobiology study (IEEE submission). Raw archives are the canonical sources; processed outputs are derived artifacts.",
+  "ensembles": {
+    "PED00422": {
+      "archive": "PED00422_ensembles.tar.gz",
+      "member": "PED00422e002.tar.gz",
+      "inner": "pdbfile.pdb",
+      "size_bytes": 107365303,
+      "mtime": "2026-07-18T21:14:39.820535",
+      "sha256": "8a554afedeb3874f5c356f065e1de58b79c25aa6c8d9dd1a8183f17796d107e4"
+    },
+    "PED00192": {
+      "archive": "PED00192_ensembles.tar.gz",
+      "member": "PED00192e001.tar.gz",
+      "inner": "PED00192e002.pdb",
+      "size_bytes": 1535689,
+      "mtime": "2026-07-18T20:40:40.039096",
+      "sha256": "11b9ab5126f5614fbba6d2dfef04476195fecd3bdfafbae9a99b3a4ad38b4780"
+    },
+    "PED00443": {
+      "archive": "PED00443_ensembles.tar.gz",
+      "member": "PED00443e001.tar.gz",
+      "inner": "pdbfile.pdb",
+      "size_bytes": 32850299,
+      "mtime": "2026-07-18T20:41:25.255945",
+      "sha256": "10f20b4b0742520c2677ee053cb5d00cea3a5cdce778ebfd166bc3f97ede0007"
+    }
+  },
+  "ped_urls": {
+    "PED00422": "https://proteinensemble.org/entries/PED00422/",
+    "PED00192": "https://proteinensemble.org/entries/PED00192/",
+    "PED00443": "https://proteinensemble.org/entries/PED00443/"
+  },
+  "citations": {
+    "PED": "Lazar T. et al., 'PED in 2021: a major update of the protein ensemble database for intrinsically disordered proteins', Nucleic Acids Research 2021; doi:10.1093/nar/gkaa1051",
+    "PED00422_method": "Teixeira J.M.C. et al., 'IDPConformerGenerator: a flexible software suite for sampling the conformational space of disordered protein states', J. Phys. Chem. A 2022, 126(35):5985-6003; doi:10.1021/acs.jpca.2c03726",
+    "PED00192_method": "Fisher C.K., Huang A., Stultz C.M., 'Modeling intrinsically disordered proteins with Bayesian statistics', PLoS Comput. Biol. 2010, 6(2):e1000692; doi:10.1371/journal.pcbi.1000692",
+    "PED00443_method": "Janson G., Valdes-Garcia G., Heo L., Feig M., 'Direct generation of protein conformational ensembles via machine learning' (idpGAN), Nat. Commun. 2023, 14:774; doi:10.1038/s41467-023-36443-x",
+    "sasa": "Shrake A., Rupley J.A., 'Environment and exposure to solvent of protein atoms', J. Mol. Biol. 1973, 79:351-371; doi:10.1016/0022-2836(73)90011-9",
+    "vdw": "Chothia C., 'The nature of the accessible and buried surfaces in proteins', J. Mol. Biol. 1976, 105:1-14; doi:10.1016/0022-2836(76)90191-1",
+    "rsa_reference": "Tien M.Z. et al., 'Maximum allowed solvent accessibilities of residues in proteins', PLoS ONE 2013, 8(11):e80635; doi:10.1371/journal.pone.0080635. Used: Table 1 THEORETICAL scale, ALLOWED Ramachandran region (Gly-X-Gly tripeptides, Lee-Richards/DSSP definition, probe 1.4 A); values verified against the published table 2026-08-02.",
+    "hydrophobicity": "Kyte J., Doolittle R.F., 'A simple method for displaying the hydropathic character of a protein', J. Mol. Biol. 1982, 157:105-132"
+  },
+  "note": "PED00192 Bayesian statistical weights are not included in the downloaded bundle; ensemble averages using weights require a separate download from the PED entry."
+}

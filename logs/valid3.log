@@ -1,0 +1,10 @@
+=== Couette validation (steady-state linear profile) ===
+  [nu=0.5,  H=8] R2_fit=0.9764 R2_analytic=0.9319 slope_ratio=0.7702 (expected 0.4706, got 0.3624) y_mid_dev=-0.094 t/tau=3.3
+  [nu=0.05, H=4] R2_fit=0.9739 R2_analytic=0.9706 slope_ratio=0.9309 (expected 0.8889, got 0.8275) y_mid_dev=-0.046 t/tau=1.2
+=== Laplace validation (time-averaged dP vs 1/R) ===
+  [reused outputs\sph\laplace_calibration.json]
+  R=5.0: dP=0.0947  (pin=0.097, pout=0.002, n=45)
+  R=6.0: dP=0.0763  (pin=0.079, pout=0.002, n=38)
+  R=7.0: dP=0.0649  (pin=0.067, pout=0.002, n=25)
+  sigma fit=0.5231  linearity(dP vs 1/R)=0.9993
+VALIDATION: CHECK (couette_ok=False, laplace_ok=True)

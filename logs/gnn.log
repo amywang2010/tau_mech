@@ -1,0 +1,23 @@
+Loading graphs ...
+  PED00422: 1000 graphs, 12000 APR-positive node-labels
+  PED00192: 75 graphs, 900 APR-positive node-labels
+  PED00443: 1000 graphs, 12000 APR-positive node-labels
+
+[A] Main experiments: train on PED00422 graph-level splits
+  GCN       seed=0  test PR-AUC=0.9030 ROC=0.9966 F1=0.8426 (best epoch 97)
+  GCN       seed=1  test PR-AUC=0.9029 ROC=0.9968 F1=0.8390 (best epoch 99)
+  GCN       seed=2  test PR-AUC=0.9010 ROC=0.9965 F1=0.8379 (best epoch 96)
+  GAT       seed=0  test PR-AUC=0.9366 ROC=0.9979 F1=0.8480 (best epoch 100)
+  GraphSAGE seed=0  test PR-AUC=0.9996 ROC=1.0000 F1=0.9900 (best epoch 95)
+  MLP       seed=0  test PR-AUC=0.8002 ROC=0.9940 F1=0.7857 (best epoch 34)
+Traceback (most recent call last):
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\train_gnn.py", line 297, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\train_gnn.py", line 87, in main
+    _plot_pr_curves(main_results, data["PED00422"], te, tr)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\train_gnn.py", line 195, in _plot_pr_curves
+    y, p = predict_proba(m["model"], test_d)
+                         ~^^^^^^^^^
+KeyError: 'model'

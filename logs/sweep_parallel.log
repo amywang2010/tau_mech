@@ -1,0 +1,12 @@
+resume: 0 done, 6 pending [0.0, 0.001, 0.003, 0.01, 0.03, 0.1]
+[worker rate=0.003] start (pid 12980)
+[worker rate=0] start (pid 12740)
+[worker rate=0.01] start (pid 28292)
+[worker rate=0.001] start (pid 22296)
+[worker rate=0.03] start (pid 25960)
+[worker rate=0.1] start (pid 22488)
+[driver] worker rate=0 FAILED rc=1
+[driver] worker rate=0.003 FAILED rc=1
+[driver] worker rate=0.01 FAILED rc=1
+[driver] worker rate=0.03 FAILED rc=1
+[driver] worker rate=0.1 FAILED rc=1

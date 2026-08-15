@@ -1,0 +1,4 @@
+PED00422: 700 train / 150 val / 150 test graphs
+  full           test PR-AUC=0.9030 ROC=0.9966 F1=0.8424
+  rsa_augment    test PR-AUC=0.9163 ROC=0.9971 F1=0.8559
+summary.json updated in 2115s

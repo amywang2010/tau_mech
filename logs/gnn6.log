@@ -1,0 +1,38 @@
+[threads] torch intra-op threads = 2
+Loading graphs ...
+  PED00422: 1000 graphs, 12000 APR-positive node-labels
+  PED00192: 75 graphs, 900 APR-positive node-labels
+  PED00443: 1000 graphs, 12000 APR-positive node-labels
+
+[A] Main experiments: train on PED00422 graph-level splits
+  GCN       seed=0  test PR-AUC=0.9030 ROC=0.9966 F1=0.8424 (best epoch 97)
+  GCN       seed=1  test PR-AUC=0.9027 ROC=0.9968 F1=0.8388 (best epoch 99)
+  GCN       seed=2  test PR-AUC=0.9009 ROC=0.9965 F1=0.8379 (best epoch 96)
+  GAT       seed=0  test PR-AUC=0.9366 ROC=0.9979 F1=0.8487 (best epoch 100)
+  GraphSAGE seed=0  test PR-AUC=0.9997 ROC=1.0000 F1=0.9917 (best epoch 97)
+  MLP       seed=0  test PR-AUC=0.7929 ROC=0.9944 F1=0.8148 (best epoch 47)
+  [ckpt] saved 6 trained models to outputs\gnn\main_checkpoint.pt
+
+[B] Cross-ensemble GCN transfer
+
+[C] Ablations (GCN on PED00422 split)
+  full           test PR-AUC=0.9030 ROC=0.9966
+  no_edge_attr   test PR-AUC=0.9030 ROC=0.9966
+  no_aa          test PR-AUC=0.4553 ROC=0.9771
+  rsa_augment    test PR-AUC=0.9117 ROC=0.9970
+  mlp_no_graph   test PR-AUC=0.7929
+
+[D] GNNExplainer on held-out PED00422 conformers
+C:\Users\Okapi\Downloads\PED Files\tau_mech\scripts\..\tau_mech\gnn.py:486: UserWarning: The 'target' should not be provided for the explanation type 'model'
+  def explain_apr_nodes(model: torch.nn.Module, data: Data,
+  conformer model_00977.npz: explained 6 APR nodes
+  conformer model_00257.npz: explained 6 APR nodes
+
+[E] Node embeddings -> PCA + t-SNE
+
+[F] Permutation importance (MLP)
+  one-hot_AA   PR-AUC drop 0.6647 +/- 0.0027 (base 0.7929)
+  hydropathy   PR-AUC drop 0.2218 +/- 0.0076 (base 0.7929)
+  seq_position PR-AUC drop 0.7298 +/- 0.0012 (base 0.7929)
+
+Done in 48.6 min. Results in outputs\gnn/
