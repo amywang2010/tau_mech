@@ -25,7 +25,7 @@ from tau_mech.sasa import fibonacci_sphere, vdw_radii_for_elements
 from tau_mech.constants import REFERENCE_SASA, PROBE_RADIUS, N_PROBE_POINTS
 from tau_mech.numbering import residue_index_from_atoms
 
-DATA = "../PED00422_ensembles.tar.gz"
+DATA = "data/PED00422_ensembles.tar.gz"
 MEMBER = "PED00422e002.tar.gz"
 INNER = "pdbfile.pdb"
 

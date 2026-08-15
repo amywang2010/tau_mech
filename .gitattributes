@@ -1,0 +1,4 @@
+# Raw PED data archives are stored with Git LFS (PED00422 is 107 MB,
+# over GitHub's 100 MB per-file limit). Stored byte-for-byte so the
+# SHA-256 integrity checks in outputs/provenance.json remain valid.
+data/*.tar.gz filter=lfs diff=lfs merge=lfs -text

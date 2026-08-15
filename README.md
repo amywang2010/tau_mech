@@ -32,31 +32,33 @@ stages.
   literature positions. `HIP` (protonated His) in PED00422 is normalized to
   His.
 
-### Getting the raw data (required for the full pipeline, not for the tests)
+### Raw data (bundled via Git LFS)
 
-The three raw PED archives are **not** in this repository (≈140 MB total;
-PED00422 alone is 107 MB, over GitHub's per-file limit, and the data is
-re-published from the Protein Ensemble Database). Download them from the PED
-entry pages below and verify the SHA-256 digests recorded in
-`outputs/provenance.json`:
+The three raw PED archives are **included in this repository** under `data/`
+(≈140 MB total), stored with **Git LFS** because `PED00422_ensembles.tar.gz`
+is 107 MB — over GitHub's 100 MB per-file limit. They are stored
+byte-for-byte, so the SHA-256 digests in `outputs/provenance.json` remain
+valid for integrity verification.
 
-| Entry | Archive | Size | PED entry page |
-|---|---|---|---|
-| PED00422 | `PED00422_ensembles.tar.gz` | 107 MB | https://proteinensemble.org/entries/PED00422/ |
-| PED00192 | `PED00192_ensembles.tar.gz` | 1.5 MB | https://proteinensemble.org/entries/PED00192/ |
-| PED00443 | `PED00443_ensembles.tar.gz` | 33 MB | https://proteinensemble.org/entries/PED00443/ |
+| Entry | Archive (in `data/`) | Size |
+|---|---|---|
+| PED00422 | `PED00422_ensembles.tar.gz` | 107 MB |
+| PED00192 | `PED00192_ensembles.tar.gz` | 1.5 MB |
+| PED00443 | `PED00443_ensembles.tar.gz` | 33 MB |
 
-Place the `*.tar.gz` files one directory level **above** the repository root
-(the default `--data-dir ..`), or point the pipeline at them explicitly with
-`--data-dir /path/to/data`:
+To clone with the data (requires Git LFS ≥ 3.0):
 
+```bash
+git lfs install   # once, if not already installed
+git clone https://github.com/amywang2010/tau_mech.git
+# if the data appears as small pointer files, run: git lfs pull
 ```
-parent-dir/
-├── tau_mech/                 # this repository
-├── PED00422_ensembles.tar.gz
-├── PED00192_ensembles.tar.gz
-└── PED00443_ensembles.tar.gz
-```
+
+A normal `git clone` fetches the LFS objects automatically once `git lfs` is
+installed. The pipeline reads `data/` by default (`--data-dir data`); the
+archives are nested gzip tarballs (outer `.tar.gz` → inner `.tar.gz` → PDB)
+streamed directly, never extracted to disk. Original sources for provenance:
+https://proteinensemble.org/entries/PED00422/ (and …/PED00192/, …/PED00443/).
 
 The 55-test suite does **not** need the raw data (tests build their own
 fixtures), so `pip install -r requirements.txt && pytest tests/` works
@@ -260,6 +262,6 @@ Shrake–Rupley 1973, Chothia 1976, Tien et al. 2013, Kyte–Doolittle 1982.
 - [x] all numeric protocol parameters recorded (config_used.json)
 - [x] unit tests + real-data smoke tests
 - [ ] lock file (`pip freeze > requirements.lock`) — recommended before submission
-- [x] git repository with the raw archives *excluded* (data too large; keep
-      them hashed in provenance.json)
+- [x] git repository with the raw archives bundled via Git LFS (byte-for-byte;
+      hashes in provenance.json)
 - [ ] resolve the Phase 3 zero-shear drift (see `PHASE3_SPH_DRIFT_FINDING.md`)

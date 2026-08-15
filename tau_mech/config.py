@@ -19,7 +19,7 @@ class PipelineConfig:
     """Global pipeline configuration."""
 
     # data
-    data_dir: str = ".."                      # directory containing the *.tar.gz archives
+    data_dir: str = "data"                    # directory containing the *.tar.gz archives
     output_dir: str = "outputs"               # where processed outputs are written
 
     # parsing

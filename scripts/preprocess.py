@@ -34,7 +34,7 @@ def main() -> None:
                    help="process only this many conformers per ensemble")
     p.add_argument("--start-at", type=int, default=0,
                    help="skip this many conformers at the start")
-    p.add_argument("--data-dir", default="..", help="directory with the raw *.tar.gz")
+    p.add_argument("--data-dir", default="data", help="directory with the raw *.tar.gz")
     p.add_argument("--out-dir", default="outputs", help="output directory")
     p.add_argument("--cutoff", type=float, default=5.0,
                    help="heavy-atom edge cutoff (Angstrom)")
