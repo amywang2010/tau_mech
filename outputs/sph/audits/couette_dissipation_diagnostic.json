@@ -1,0 +1,62 @@
+{
+  "hypothesis": "slope deficit = effective-viscosity enhancement from Monaghan AV + XSPH; disabling them must recover slope_ratio_central ~ 1",
+  "decision_rule": "if the no-dissipator config recovers ~1.0, the deficit is ATTRIBUTED and the acceptance framework reports nu_eff as a measured property (the sweep already uses the measured local shear rate); if not, the band is NOT relaxed and the cause is investigated further",
+  "configs": {
+    "as_delivered (alpha=0.1, xsph=0.1)": {
+      "r2_fit": 0.9980296114998911,
+      "r2_central": 0.9984627587642699,
+      "slope_fit": 0.3766167924744041,
+      "slope_central": 0.3728203712002172,
+      "slope_ratio": 0.815399274436615,
+      "slope_ratio_central": 0.8071797812693312,
+      "gamma_expected": 0.46188021535170054,
+      "y_mid_dev": -0.12222370156020457,
+      "u_wall_fluid": NaN,
+      "slip_frac": NaN,
+      "nu_used": 0.5,
+      "t_over_tau": 3.158273408348594
+    },
+    "no_artificial_viscosity": {
+      "r2_fit": 0.9980255543014304,
+      "r2_central": 0.9984467118917368,
+      "slope_fit": 0.3755313492864499,
+      "slope_central": 0.37170836803630036,
+      "slope_ratio": 0.8130492209987822,
+      "slope_ratio_central": 0.8047722237967295,
+      "gamma_expected": 0.46188021535170054,
+      "y_mid_dev": -0.12222202798133619,
+      "u_wall_fluid": NaN,
+      "slip_frac": NaN,
+      "nu_used": 0.5,
+      "t_over_tau": 3.158273408348594
+    },
+    "no_xsph": {
+      "r2_fit": 0.9985977553132666,
+      "r2_central": 0.9972035233102576,
+      "slope_fit": 0.4224395387489399,
+      "slope_central": 0.4009744814853905,
+      "slope_ratio": 0.9146084302989069,
+      "slope_ratio_central": 0.8681352180891032,
+      "gamma_expected": 0.46188021535170054,
+      "y_mid_dev": 0.19459096614059312,
+      "u_wall_fluid": -1.6906673344007948,
+      "slip_frac": 0.15466633279960262,
+      "nu_used": 0.5,
+      "t_over_tau": 3.158273408348594
+    },
+    "no_dissipators (Morris only)": {
+      "r2_fit": 0.9924079996810657,
+      "r2_central": 0.9944136530422625,
+      "slope_fit": 0.44865212976769453,
+      "slope_central": 0.40832069978577384,
+      "slope_ratio": 0.9713603546020402,
+      "slope_ratio_central": 0.8840402472637985,
+      "gamma_expected": 0.46188021535170054,
+      "y_mid_dev": -0.20457827511947935,
+      "u_wall_fluid": -1.714628886708732,
+      "slip_frac": 0.14268555664563398,
+      "nu_used": 0.5,
+      "t_over_tau": 3.158273408348594
+    }
+  }
+}

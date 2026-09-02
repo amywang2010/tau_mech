@@ -1,0 +1,69 @@
+{
+  "solver_state": "post CSF-symmetric-stencil fix (2026-09-02)",
+  "protocol": "steady-state linear profile; no-slip planes = innermost frozen wall rows; central fit excludes ~2h wall layers",
+  "n_steps": 6000,
+  "dt": 0.008,
+  "configs": {
+    "nu_0.5_H8": {
+      "n_steps": 6000,
+      "dt": 0.008,
+      "t_sim": 48.0,
+      "nu_used": 0.5,
+      "tau_mode": 15.198177546350669,
+      "t_over_tau": 3.158273408348594,
+      "r2_fit": 0.9980296114998911,
+      "r2_analytic": 0.9645089017659941,
+      "slope_fit": 0.3766167924744041,
+      "gamma_expected": 0.46188021535170054,
+      "slope_ratio": 0.815399274436615,
+      "r2_central": 0.9984627587642699,
+      "slope_central": 0.3728203712002172,
+      "slope_ratio_central": 0.8071797812693312,
+      "y_mid_dev": -0.12222370156020457,
+      "u_wall_fluid": NaN,
+      "slip_frac": NaN,
+      "n_bins": 15,
+      "u_wall": 2.0,
+      "H_wall": 8.660254037844387,
+      "central_zone": 2.0,
+      "n_wall_layers": 4,
+      "note": "steady-state linear-profile validation; no-slip planes are the innermost frozen wall rows (lattice continuation, H_wall = inner_top - inner_bottom); the central-region fit excludes the ~2h wall momentum- transmission layers and is the bulk shear rate",
+      "acceptance": {
+        "r2_central_gt_0.99": true,
+        "slope_ratio_central_in_0.9_1.1": false,
+        "pass": false
+      }
+    },
+    "nu_0.05_H4": {
+      "n_steps": 6000,
+      "dt": 0.008,
+      "t_sim": 48.0,
+      "nu_used": 0.05,
+      "tau_mode": 45.97448707771077,
+      "t_over_tau": 1.0440573250739156,
+      "r2_fit": 0.9947189161883364,
+      "r2_analytic": 0.8561570068715081,
+      "slope_fit": 0.5250674444575815,
+      "gamma_expected": 0.8397822097303648,
+      "slope_ratio": 0.6252424002006054,
+      "r2_central": NaN,
+      "slope_central": NaN,
+      "slope_ratio_central": NaN,
+      "y_mid_dev": -0.04988861289200175,
+      "u_wall_fluid": NaN,
+      "slip_frac": NaN,
+      "n_bins": 9,
+      "u_wall": 2.0,
+      "H_wall": 4.763139720814412,
+      "central_zone": 2.0,
+      "n_wall_layers": 4,
+      "note": "steady-state linear-profile validation; no-slip planes are the innermost frozen wall rows (lattice continuation, H_wall = inner_top - inner_bottom); the central-region fit excludes the ~2h wall momentum- transmission layers and is the bulk shear rate",
+      "acceptance": {
+        "r2_central_gt_0.99": false,
+        "slope_ratio_central_in_0.9_1.1": false,
+        "pass": false
+      }
+    }
+  },
+  "all_pass": false
+}
