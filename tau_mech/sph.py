@@ -672,6 +672,39 @@ def droplet_deformation(state: SPHState) -> Dict:
 # ---------------------------------------------------------------------------
 
 
+def _lattice_row_profile(y, ux, inner_bottom: float, dy: float):
+    """Average ux over exact lattice rows (parameter-free y-binning).
+
+    The wall lattice is generated in full rows y = inner_bottom + k*dy, so
+    every fluid particle belongs to the row k = round((y - inner_bottom)/dy)
+    - exact up to the documented ~1e-16 row-accumulation drift. Unlike
+    fixed-width digitize binning this cannot drop a boundary row (digitize
+    silently discards below-range values into index -1) and cannot depend on
+    the ratio of bin width to row spacing. SPH y-fluctuations are ~1e-3 of dy
+    (rho bounded to 0.4% -> spacing fluctuations ~0.13%), orders of magnitude
+    below the half-row spacing, so the assignment stays valid at all times.
+
+    Returns (row_y, u_row, n_empty, max_y_dev): occupied-row centers, row-mean
+    velocities (sorted by y), the number of empty rows (0 for a healthy
+    lattice; reported so a violation is DATA, not an assumption), and the
+    max |y - row_y| deviation actually observed.
+    """
+    y = np.asarray(y, dtype=float)
+    ux = np.asarray(ux, dtype=float)
+    k = np.round((y - inner_bottom) / dy).astype(int)
+    row_y_all = inner_bottom + np.arange(int(k.min()), int(k.max()) + 1) * dy
+    u_row_all = np.full(len(row_y_all), np.nan)
+    row_dev = np.abs(y - row_y_all[k - int(k.min())])
+    max_y_dev = float(row_dev.max()) if len(row_dev) else 0.0
+    for i in range(len(row_y_all)):
+        sel = k == int(k.min()) + i
+        if sel.any():
+            u_row_all[i] = ux[sel].mean()
+    occ = ~np.isnan(u_row_all)
+    n_empty = int((~occ).sum())
+    return row_y_all[occ], u_row_all[occ], n_empty, max_y_dev
+
+
 def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
                      U_wall: float = 2.0, domain=(0.0, 0.0, 24.0, 8.0),
                      spacing: float = 0.5, n_wall_layers: int = 4) -> Dict:
@@ -684,7 +717,12 @@ def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
     (i) the linearity of the measured profile (R^2 of a straight-line fit),
     (ii) the slope ratio (fitted shear rate / expected shear rate) - a direct
     check of the effective viscosity + wall coupling, and (iii) the deviation
-    of the zero-velocity midpoint from the domain centre.
+    of the zero-velocity midpoint from the domain centre. Wall slip is
+    measured by the standard linear-extrapolation convention: the bulk
+    (full-channel) fit evaluated at the two no-slip planes vs U_wall.
+
+    The y-profile is binned by exact lattice rows (see
+    :func:`_lattice_row_profile`), not fixed-width bins.
 
     The caller must pass a configuration whose viscosity reaches steady state
     within n_steps*dt (viscous time tau = H_wall**2/(nu*pi**2)).
@@ -701,15 +739,14 @@ def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
     run(state, params, n_steps, dt)
 
     free = state.phase == 0
-    y = state.pos[free, 1]
-    ux = state.vel[free, 0]
-    bins = np.linspace(y0, y1, 25)
-    idx = np.digitize(y, bins) - 1
-    yb = (bins[:-1] + bins[1:]) / 2
-    ub = np.array([ux[idx == k].mean() if (idx == k).any() else np.nan
-                   for k in range(len(bins) - 1)])
-    ok = ~np.isnan(ub)
-    yy, uu = yb[ok], ub[ok]
+    dy = spacing * np.sqrt(3.0) / 2.0
+    yy, uu, n_empty, max_y_dev = _lattice_row_profile(
+        state.pos[free, 1], state.vel[free, 0], inner_bottom, dy)
+    if n_empty:
+        raise RuntimeError(
+            f"Couette profile: {n_empty} lattice rows empty - lattice "
+            f"integrity violated (max |dy particle| = {max_y_dev:.3e}); "
+            "refusing to fit a broken profile")
 
     # (i) linearity: R^2 of a least-squares straight-line fit over the FULL
     # channel and over the CENTRAL region only. The frozen walls transmit
@@ -728,7 +765,7 @@ def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
     slope_fit = float(coef[0])
 
     z = 2.0 * params.h  # wall momentum-transmission zone
-    cok = (yy > y0 + z) & (yy < y1 - z)
+    cok = (yy > inner_bottom + z) & (yy < inner_top - z)
     if cok.sum() >= 4:
         Ac = np.vstack([yy[cok], np.ones(cok.sum())]).T
         cc, *_ = np.linalg.lstsq(Ac, uu[cok], rcond=None)
@@ -756,11 +793,13 @@ def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
     y_mid_fit = -coef[1] / max(abs(coef[0]), 1e-12)
     y_mid_dev = y_mid_fit - 0.5 * (y0 + y1)
 
-    # (iv) wall slip: fluid velocity at the first interior bin vs U_wall
-    # (the bottom wall moves at -U_wall, so compare magnitudes)
-    wall_layer = (yy > y0) & (yy < y0 + spacing)
-    u_wall_fluid = float(uu[wall_layer].mean()) if wall_layer.sum() else float("nan")
-    slip_frac = 1.0 - abs(u_wall_fluid) / max(abs(U_wall), 1e-12)
+    # (iv) wall slip: the standard linear-extrapolation convention - the
+    # bulk (full-channel) fit evaluated at the two no-slip planes vs U_wall.
+    # (A bin-mean at a fixed depth is bin-geometry dependent and cannot be
+    # compared across channel heights; the extrapolated value is.)
+    u_wall_fluid = float(coef[0] * inner_bottom + coef[1])
+    u_top_fluid = float(coef[0] * inner_top + coef[1])
+    slip_frac = 1.0 - abs(u_wall_fluid + U_wall) / max(abs(U_wall), 1e-12)
 
     nu = params.mu_solvent / state.rho0
     tau = H_wall ** 2 / (nu * np.pi ** 2)  # slowest decaying mode
@@ -772,14 +811,18 @@ def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
             "r2_central": r2_central, "slope_central": slope_central,
             "slope_ratio_central": slope_ratio_central,
             "y_mid_dev": y_mid_dev, "u_wall_fluid": u_wall_fluid,
-            "slip_frac": slip_frac, "n_bins": int(ok.sum()),
+            "u_top_fluid": u_top_fluid, "slip_frac": slip_frac,
+            "n_bins": int(len(yy)), "n_rows_empty": int(n_empty),
+            "max_y_dev": float(max_y_dev),
             "u_wall": U_wall, "H_wall": H_wall, "central_zone": z,
             "n_wall_layers": n_wall_layers,
             "note": ("steady-state linear-profile validation; no-slip planes "
                      "are the innermost frozen wall rows (lattice "
                      "continuation, H_wall = inner_top - inner_bottom); the "
                      "central-region fit excludes the ~2h wall momentum- "
-                     "transmission layers and is the bulk shear rate")}
+                     "transmission layers and is the bulk shear rate; y-"
+                     "profile binned by exact lattice rows; slip = linear "
+                     "extrapolation of the bulk fit to the no-slip planes")}
 
 
 def _laplace_masks(state, R, h):
