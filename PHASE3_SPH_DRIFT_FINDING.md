@@ -1,6 +1,16 @@
 # Phase 3 (SPH) — Spurious zero-shear droplet drift: full finding record
 
-**Status: OPEN — the shear sweep results are not trustworthy as generated.**
+> **RESOLUTION (2026-09-02, supersession notice):** root cause **identified and
+> fixed** — a one-sided (higher-index-neighbour-only) accumulation in the CSF
+> curvature divergence, making the operator label-dependent, azimuthally
+> biased, and non-conservative (net internal surface force 10.8% of its own
+> magnitude). Full diagnosis, operator-level evidence, the symmetric fix, the
+> convergence analysis, and the pre-registered revalidation gate are in
+> **`PHASE3_CSFFIX_AUDIT.md`**. The open status text below is retained as the
+> historical record of the finding; the gate + full revalidation must PASS
+> before any sweep result is reported.
+
+**Status at time of finding: OPEN — the shear sweep results were not trustworthy as generated.**
 **Date of finding: 2026-08-15.**
 **Author: audited during finalization of `tau_mech`; written for external peer review.**
 

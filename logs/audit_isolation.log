@@ -1,0 +1,35 @@
+no_csf: D0=0.0164 D_final=0.0168 slope=4.07e-06 all_pass=True
+   G1_max_abs_dD_dt: value=4.067027092640091e-06 limit=5e-05 pass=True
+   G2_max_abs_D_minus_D0: value=0.0003053413839675251 limit=0.02 pass=True
+   G3_max_com_drift_rate: value=7.092046172552102e-06 limit=0.001 pass=True
+   G4_rho_bounds: value=[0.9957851509799511, 1.0009984729642025] limit=[0.98, 1.02] pass=True
+   G5_abs_pressure_bound: value=0.4161926972238907 limit=0.5 pass=True
+   G6_no_nan: value=0 limit=0 pass=True
+no_xsph: D0=0.0072 D_final=0.0009 slope=-9.41e-05 all_pass=False
+   G1_max_abs_dD_dt: value=9.413965248082909e-05 limit=5e-05 pass=False
+   G2_max_abs_D_minus_D0: value=0.0062673696564260065 limit=0.02 pass=True
+   G3_max_com_drift_rate: value=0.000204699541958564 limit=0.001 pass=True
+   G4_rho_bounds: value=[0.9980037571375411, 1.004287880266109] limit=[0.98, 1.02] pass=True
+   G5_abs_pressure_bound: value=0.434343389526012 limit=0.5 pass=True
+   G6_no_nan: value=0 limit=0 pass=True
+no_artificial_viscosity: D0=0.0098 D_final=0.0032 slope=-1.02e-04 all_pass=False
+   G1_max_abs_dD_dt: value=0.00010233444072164509 limit=5e-05 pass=False
+   G2_max_abs_D_minus_D0: value=0.006614811797296082 limit=0.02 pass=True
+   G3_max_com_drift_rate: value=0.00010154581931320905 limit=0.001 pass=True
+   G4_rho_bounds: value=[0.9958977508274004, 1.0038727196766657] limit=[0.98, 1.02] pass=True
+   G5_abs_pressure_bound: value=0.4052107587714476 limit=0.5 pass=True
+   G6_no_nan: value=0 limit=0 pass=True
+no_shepard: D0=0.0098 D_final=0.0030 slope=-1.03e-04 all_pass=False
+   G1_max_abs_dD_dt: value=0.00010271164078116738 limit=5e-05 pass=False
+   G2_max_abs_D_minus_D0: value=0.006728702882038078 limit=0.02 pass=True
+   G3_max_com_drift_rate: value=0.00014192147679725764 limit=0.001 pass=True
+   G4_rho_bounds: value=[0.9927949078323083, 1.0049492097099242] limit=[0.98, 1.02] pass=True
+   G5_abs_pressure_bound: value=0.7051208893859795 limit=0.5 pass=False
+   G6_no_nan: value=0 limit=0 pass=True
+no_immiscibility: D0=0.0099 D_final=0.0033 slope=-1.02e-04 all_pass=False
+   G1_max_abs_dD_dt: value=0.00010181238755865662 limit=5e-05 pass=False
+   G2_max_abs_D_minus_D0: value=0.006562125925458679 limit=0.02 pass=True
+   G3_max_com_drift_rate: value=0.00010543819917552266 limit=0.001 pass=True
+   G4_rho_bounds: value=[0.9957545924626838, 1.003807249102689] limit=[0.98, 1.02] pass=True
+   G5_abs_pressure_bound: value=0.41917180469425325 limit=0.5 pass=True
+   G6_no_nan: value=0 limit=0 pass=True

@@ -1,0 +1,7 @@
+baseline: D0=0.0098 D_final=0.0004 slope=-1.35e-05 all_pass=True
+   G1_max_abs_dD_dt: value=1.3475676712327749e-05 limit=5e-05 pass=True
+   G2_max_abs_D_minus_D0: value=0.00982684386902161 limit=0.02 pass=True
+   G3_max_com_drift_rate: value=9.948613185484234e-05 limit=0.001 pass=True
+   G4_rho_bounds: value=[0.9957533668290239, 1.0044430563583298] limit=[0.98, 1.02] pass=True
+   G5_abs_pressure_bound: value=0.4502719107747355 limit=0.5 pass=True
+   G6_no_nan: value=0 limit=0 pass=True
