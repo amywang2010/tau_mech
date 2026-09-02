@@ -1,0 +1,89 @@
+{
+  "rows": [
+    {
+      "radius": 3.0,
+      "spacing": 0.5,
+      "h_over_R": 0.3333333333333333,
+      "expected_kappa": 0.3333333333333333,
+      "rim_mean_kappa": 0.5008827799609116,
+      "rim_mean_over_expected": 1.5026483398827348,
+      "azimuthal_spread": 0.07050255755496598,
+      "spread_over_expected": 0.21150767266489795,
+      "n_rim": 109,
+      "min_sector_count": 7
+    },
+    {
+      "radius": 4.0,
+      "spacing": 0.5,
+      "h_over_R": 0.25,
+      "expected_kappa": 0.25,
+      "rim_mean_kappa": 0.33294396754748995,
+      "rim_mean_over_expected": 1.3317758701899598,
+      "azimuthal_spread": 0.059555907050024115,
+      "spread_over_expected": 0.23822362820009646,
+      "n_rim": 158,
+      "min_sector_count": 11
+    },
+    {
+      "radius": 5.0,
+      "spacing": 0.5,
+      "h_over_R": 0.2,
+      "expected_kappa": 0.2,
+      "rim_mean_kappa": 0.2446563025700331,
+      "rim_mean_over_expected": 1.2232815128501655,
+      "azimuthal_spread": 0.044074298107086296,
+      "spread_over_expected": 0.22037149053543148,
+      "n_rim": 208,
+      "min_sector_count": 15
+    },
+    {
+      "radius": 6.0,
+      "spacing": 0.5,
+      "h_over_R": 0.16666666666666666,
+      "expected_kappa": 0.16666666666666666,
+      "rim_mean_kappa": 0.20018194375681012,
+      "rim_mean_over_expected": 1.2010916625408607,
+      "azimuthal_spread": 0.014218457559250441,
+      "spread_over_expected": 0.08531074535550265,
+      "n_rim": 260,
+      "min_sector_count": 19
+    },
+    {
+      "radius": 7.0,
+      "spacing": 0.5,
+      "h_over_R": 0.14285714285714285,
+      "expected_kappa": 0.14285714285714285,
+      "rim_mean_kappa": 0.16475391326658922,
+      "rim_mean_over_expected": 1.1532773928661246,
+      "azimuthal_spread": 0.020109003373437184,
+      "spread_over_expected": 0.1407630236140603,
+      "n_rim": 306,
+      "min_sector_count": 23
+    },
+    {
+      "radius": 6.0,
+      "spacing": 0.5,
+      "h_over_R": 0.16666666666666666,
+      "expected_kappa": 0.16666666666666666,
+      "rim_mean_kappa": 0.20018194375681012,
+      "rim_mean_over_expected": 1.2010916625408607,
+      "azimuthal_spread": 0.014218457559250441,
+      "spread_over_expected": 0.08531074535550265,
+      "n_rim": 260,
+      "min_sector_count": 19
+    },
+    {
+      "radius": 6.0,
+      "spacing": 0.25,
+      "h_over_R": 0.16666666666666666,
+      "expected_kappa": 0.16666666666666666,
+      "rim_mean_kappa": 0.19647340015092904,
+      "rim_mean_over_expected": 1.1788404009055744,
+      "azimuthal_spread": 0.006452407148514028,
+      "spread_over_expected": 0.038714442891084166,
+      "n_rim": 1034,
+      "min_sector_count": 80
+    }
+  ],
+  "interpretation": "defect fixed if spread/(1/R) decreases with resolution; residual is discretization bias"
+}

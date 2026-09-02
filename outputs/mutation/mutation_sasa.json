@@ -1,0 +1,554 @@
+{
+  "archive": "data/PED00192_ensembles.tar.gz",
+  "n_models": 20,
+  "mutations": {
+    "wt": {
+      "VQIINK": {
+        "mean": 0.5918262537071419,
+        "sd": 0.08988938622837503
+      },
+      "VQIVYK": {
+        "mean": 0.6008371568223451,
+        "sd": 0.08533615008210615
+      }
+    },
+    "P301L": {
+      "VQIINK": {
+        "mean": 0.5918262537071419,
+        "sd": 0.08988938622837503
+      },
+      "VQIVYK": {
+        "mean": 0.6016053144754985,
+        "sd": 0.08536125486877699
+      }
+    },
+    "dK280": {
+      "VQIINK": {
+        "mean": 0.6008014310745897,
+        "sd": 0.10088289240750191
+      },
+      "VQIVYK": {
+        "mean": 0.6011789689406004,
+        "sd": 0.08538719194368252
+      }
+    },
+    "delta_P301L_minus_wt": {
+      "VQIINK": 0.0,
+      "VQIVYK": 0.0007681576531534118
+    },
+    "delta_dK280_minus_wt": {
+      "VQIINK": 0.008975177367447795,
+      "VQIVYK": 0.00034181211825534685
+    }
+  },
+  "per_conformer": [
+    {
+      "conformer": 0,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6694577774159395,
+        "VQIVYK": 0.6671896916295849
+      },
+      "P301L": {
+        "VQIINK": 0.6694577774159395,
+        "VQIVYK": 0.6671896916295849
+      },
+      "dK280": {
+        "VQIINK": 0.6876466692372099,
+        "VQIVYK": 0.6671896916295849
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 128.1350923644157,
+        "res59_pdb_sasa_P301L": 109.0509641914089,
+        "res59_min_dist_to_VQIINK": 20.109389204587984,
+        "res59_min_dist_to_VQIVYK": 7.534314238698182,
+        "VQIINK_matched_275_279_rsa_wt": 0.6580551099483587,
+        "VQIINK_matched_275_279_rsa_dK280": 0.6876466692372099,
+        "VQIINK_matched_delta": 0.029591559288851155
+      }
+    },
+    {
+      "conformer": 1,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.5518756531130737,
+        "VQIVYK": 0.6226904825629573
+      },
+      "P301L": {
+        "VQIINK": 0.5518756531130737,
+        "VQIVYK": 0.6226904825629573
+      },
+      "dK280": {
+        "VQIINK": 0.5789321660206646,
+        "VQIVYK": 0.6226904825629573
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 113.71066604499902,
+        "res59_pdb_sasa_P301L": 125.22807196229394,
+        "res59_min_dist_to_VQIINK": 42.141741262135504,
+        "res59_min_dist_to_VQIVYK": 7.28438925348886,
+        "VQIINK_matched_275_279_rsa_wt": 0.5477031239708262,
+        "VQIINK_matched_275_279_rsa_dK280": 0.5789321660206646,
+        "VQIINK_matched_delta": 0.03122904204983834
+      }
+    },
+    {
+      "conformer": 2,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.5093785696418917,
+        "VQIVYK": 0.5843198674092115
+      },
+      "P301L": {
+        "VQIINK": 0.5093785696418917,
+        "VQIVYK": 0.5843198674092115
+      },
+      "dK280": {
+        "VQIINK": 0.5620571718744046,
+        "VQIVYK": 0.5843198674092115
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 127.70783576352748,
+        "res59_pdb_sasa_P301L": 99.51727768531507,
+        "res59_min_dist_to_VQIINK": 51.123761422855225,
+        "res59_min_dist_to_VQIVYK": 6.393475100489716,
+        "VQIINK_matched_275_279_rsa_wt": 0.5325122382966446,
+        "VQIINK_matched_275_279_rsa_dK280": 0.5620571718744046,
+        "VQIINK_matched_delta": 0.029544933577760002
+      }
+    },
+    {
+      "conformer": 3,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6163569310842031,
+        "VQIVYK": 0.5875458778303869
+      },
+      "P301L": {
+        "VQIINK": 0.6163569310842031,
+        "VQIVYK": 0.5875458778303869
+      },
+      "dK280": {
+        "VQIINK": 0.6524474293095607,
+        "VQIVYK": 0.5875458778303869
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 123.98400127147238,
+        "res59_pdb_sasa_P301L": 101.69963738200879,
+        "res59_min_dist_to_VQIINK": 12.288915497623282,
+        "res59_min_dist_to_VQIVYK": 10.10123444935217,
+        "VQIINK_matched_275_279_rsa_wt": 0.6255403595120457,
+        "VQIINK_matched_275_279_rsa_dK280": 0.6524474293095607,
+        "VQIINK_matched_delta": 0.026907069797515004
+      }
+    },
+    {
+      "conformer": 4,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6075092176541598,
+        "VQIVYK": 0.6344474789769192
+      },
+      "P301L": {
+        "VQIINK": 0.6075092176541598,
+        "VQIVYK": 0.6344474789769192
+      },
+      "dK280": {
+        "VQIINK": 0.6108006887199646,
+        "VQIVYK": 0.6344474789769192
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 126.21721549924607,
+        "res59_pdb_sasa_P301L": 110.75999059496175,
+        "res59_min_dist_to_VQIINK": 51.315073575803275,
+        "res59_min_dist_to_VQIVYK": 11.515238503701603,
+        "VQIINK_matched_275_279_rsa_wt": 0.5774483514096211,
+        "VQIINK_matched_275_279_rsa_dK280": 0.6108006887199646,
+        "VQIINK_matched_delta": 0.03335233731034348
+      }
+    },
+    {
+      "conformer": 5,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6906712803809537,
+        "VQIVYK": 0.5517834205975701
+      },
+      "P301L": {
+        "VQIINK": 0.6906712803809537,
+        "VQIVYK": 0.5517834205975701
+      },
+      "dK280": {
+        "VQIINK": 0.7117153459086906,
+        "VQIVYK": 0.5517834205975701
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 69.41303153213784,
+        "res59_pdb_sasa_P301L": 65.08961099217572,
+        "res59_min_dist_to_VQIINK": 35.78672701489925,
+        "res59_min_dist_to_VQIVYK": 10.600108647399555,
+        "VQIINK_matched_275_279_rsa_wt": 0.6778939971929525,
+        "VQIINK_matched_275_279_rsa_dK280": 0.7117153459086906,
+        "VQIINK_matched_delta": 0.03382134871573805
+      }
+    },
+    {
+      "conformer": 6,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.5026160266610608,
+        "VQIVYK": 0.6103367647723862
+      },
+      "P301L": {
+        "VQIINK": 0.5026160266610608,
+        "VQIVYK": 0.6103367647723862
+      },
+      "dK280": {
+        "VQIINK": 0.5230564252465475,
+        "VQIVYK": 0.6171730071374911
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 50.9398776804073,
+        "res59_pdb_sasa_P301L": 49.72512852101925,
+        "res59_min_dist_to_VQIINK": 7.539215016607181,
+        "res59_min_dist_to_VQIVYK": 10.451673970175264,
+        "VQIINK_matched_275_279_rsa_wt": 0.49415541934483453,
+        "VQIINK_matched_275_279_rsa_dK280": 0.5230564252465475,
+        "VQIINK_matched_delta": 0.02890100590171296
+      }
+    },
+    {
+      "conformer": 7,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.5649343691934946,
+        "VQIVYK": 0.2995028807143283
+      },
+      "P301L": {
+        "VQIINK": 0.5649343691934946,
+        "VQIVYK": 0.2995028807143283
+      },
+      "dK280": {
+        "VQIINK": 0.5562759960068662,
+        "VQIVYK": 0.2995028807143283
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 138.33898530327534,
+        "res59_pdb_sasa_P301L": 118.80246778815162,
+        "res59_min_dist_to_VQIINK": 14.343003914720311,
+        "res59_min_dist_to_VQIVYK": 5.702013779011992,
+        "VQIINK_matched_275_279_rsa_wt": 0.5169726369424195,
+        "VQIINK_matched_275_279_rsa_dK280": 0.5562759960068662,
+        "VQIINK_matched_delta": 0.03930335906444671
+      }
+    },
+    {
+      "conformer": 8,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6502890404374128,
+        "VQIVYK": 0.5426385098153181
+      },
+      "P301L": {
+        "VQIINK": 0.6502890404374128,
+        "VQIVYK": 0.5385560340827344
+      },
+      "dK280": {
+        "VQIINK": 0.7168140744528196,
+        "VQIVYK": 0.5426385098153181
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 120.98482748484534,
+        "res59_pdb_sasa_P301L": 95.75155529121211,
+        "res59_min_dist_to_VQIINK": 34.62840594379166,
+        "res59_min_dist_to_VQIVYK": 4.356402605165631,
+        "VQIINK_matched_275_279_rsa_wt": 0.6527551451948843,
+        "VQIINK_matched_275_279_rsa_dK280": 0.7168140744528196,
+        "VQIINK_matched_delta": 0.06405892925793533
+      }
+    },
+    {
+      "conformer": 9,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.4590064260344528,
+        "VQIVYK": 0.6767236016811085
+      },
+      "P301L": {
+        "VQIINK": 0.4590064260344528,
+        "VQIVYK": 0.6767236016811085
+      },
+      "dK280": {
+        "VQIINK": 0.4245176150848768,
+        "VQIVYK": 0.6767236016811085
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 129.9153282014499,
+        "res59_pdb_sasa_P301L": 110.31597883325438,
+        "res59_min_dist_to_VQIINK": 35.796106507208556,
+        "res59_min_dist_to_VQIVYK": 10.150944409050481,
+        "VQIINK_matched_275_279_rsa_wt": 0.39487367274736285,
+        "VQIINK_matched_275_279_rsa_dK280": 0.4245176150848768,
+        "VQIINK_matched_delta": 0.02964394233751394
+      }
+    },
+    {
+      "conformer": 10,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6065775895288129,
+        "VQIVYK": 0.5738017572397632
+      },
+      "P301L": {
+        "VQIINK": 0.6065775895288129,
+        "VQIVYK": 0.5738017572397632
+      },
+      "dK280": {
+        "VQIINK": 0.6421521604487654,
+        "VQIVYK": 0.5738017572397632
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 108.84990226157916,
+        "res59_pdb_sasa_P301L": 87.13102504976172,
+        "res59_min_dist_to_VQIINK": 12.311820581012828,
+        "res59_min_dist_to_VQIVYK": 9.219452635319394,
+        "VQIINK_matched_275_279_rsa_wt": 0.6166745153086338,
+        "VQIINK_matched_275_279_rsa_dK280": 0.6421521604487654,
+        "VQIINK_matched_delta": 0.025477645140131622
+      }
+    },
+    {
+      "conformer": 11,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6065100503805488,
+        "VQIVYK": 0.609025682144868
+      },
+      "P301L": {
+        "VQIINK": 0.6065100503805488,
+        "VQIVYK": 0.6159588521389973
+      },
+      "dK280": {
+        "VQIINK": 0.5973862183290646,
+        "VQIVYK": 0.609025682144868
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 98.97273495869284,
+        "res59_pdb_sasa_P301L": 91.64235210031666,
+        "res59_min_dist_to_VQIINK": 32.10217589748117,
+        "res59_min_dist_to_VQIVYK": 4.058351370668026,
+        "VQIINK_matched_275_279_rsa_wt": 0.5695837274972282,
+        "VQIINK_matched_275_279_rsa_dK280": 0.5973862183290646,
+        "VQIINK_matched_delta": 0.02780249083183639
+      }
+    },
+    {
+      "conformer": 12,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6632371401695482,
+        "VQIVYK": 0.5718282231470274
+      },
+      "P301L": {
+        "VQIINK": 0.6632371401695482,
+        "VQIVYK": 0.5719981107091988
+      },
+      "dK280": {
+        "VQIINK": 0.6567537732498698,
+        "VQIVYK": 0.5718282231470274
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 106.33662813870731,
+        "res59_pdb_sasa_P301L": 90.6454200315775,
+        "res59_min_dist_to_VQIINK": 36.065866735561656,
+        "res59_min_dist_to_VQIVYK": 4.76072406527017,
+        "VQIINK_matched_275_279_rsa_wt": 0.6231852740834294,
+        "VQIINK_matched_275_279_rsa_dK280": 0.6567537732498698,
+        "VQIINK_matched_delta": 0.033568499166440446
+      }
+    },
+    {
+      "conformer": 13,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.7037116250888413,
+        "VQIVYK": 0.6522257405705242
+      },
+      "P301L": {
+        "VQIINK": 0.7037116250888413,
+        "VQIVYK": 0.6522257405705242
+      },
+      "dK280": {
+        "VQIINK": 0.7093919531371811,
+        "VQIVYK": 0.6522257405705242
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 86.42730829535759,
+        "res59_pdb_sasa_P301L": 84.21562706723039,
+        "res59_min_dist_to_VQIINK": 20.185622127308573,
+        "res59_min_dist_to_VQIVYK": 6.555161565826079,
+        "VQIINK_matched_275_279_rsa_wt": 0.6823903670478657,
+        "VQIINK_matched_275_279_rsa_dK280": 0.7093919531371811,
+        "VQIINK_matched_delta": 0.027001586089315355
+      }
+    },
+    {
+      "conformer": 14,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.3675881550194804,
+        "VQIVYK": 0.6231130503048578
+      },
+      "P301L": {
+        "VQIINK": 0.3675881550194804,
+        "VQIVYK": 0.6231130503048578
+      },
+      "dK280": {
+        "VQIINK": 0.3337960746479055,
+        "VQIVYK": 0.6231130503048578
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 121.09792482037456,
+        "res59_pdb_sasa_P301L": 103.37515346392334,
+        "res59_min_dist_to_VQIINK": 35.821256839186105,
+        "res59_min_dist_to_VQIVYK": 7.413011924103277,
+        "VQIINK_matched_275_279_rsa_wt": 0.30334034771279705,
+        "VQIINK_matched_275_279_rsa_dK280": 0.3337960746479055,
+        "VQIINK_matched_delta": 0.03045572693510845
+      }
+    },
+    {
+      "conformer": 15,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.7211937811646626,
+        "VQIVYK": 0.5557721691741371
+      },
+      "P301L": {
+        "VQIINK": 0.7211937811646626,
+        "VQIVYK": 0.5557721691741371
+      },
+      "dK280": {
+        "VQIINK": 0.7195027810731364,
+        "VQIVYK": 0.5557721691741371
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 138.75367553354923,
+        "res59_pdb_sasa_P301L": 116.29338245548458,
+        "res59_min_dist_to_VQIINK": 36.10627135793075,
+        "res59_min_dist_to_VQIVYK": 4.976602490855894,
+        "VQIINK_matched_275_279_rsa_wt": 0.6930811813198684,
+        "VQIINK_matched_275_279_rsa_dK280": 0.7195027810731364,
+        "VQIINK_matched_delta": 0.026421599753267966
+      }
+    },
+    {
+      "conformer": 16,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6247155946247019,
+        "VQIVYK": 0.7366353120652969
+      },
+      "P301L": {
+        "VQIINK": 0.6247155946247019,
+        "VQIVYK": 0.7366353120652969
+      },
+      "dK280": {
+        "VQIINK": 0.6100244517115321,
+        "VQIVYK": 0.7366353120652969
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 128.9393400837347,
+        "res59_pdb_sasa_P301L": 109.40282256861096,
+        "res59_min_dist_to_VQIINK": 49.2808525645305,
+        "res59_min_dist_to_VQIVYK": 9.67287345970369,
+        "VQIINK_matched_275_279_rsa_wt": 0.5831517514746716,
+        "VQIINK_matched_275_279_rsa_dK280": 0.6100244517115321,
+        "VQIINK_matched_delta": 0.026872700236860503
+      }
+    },
+    {
+      "conformer": 17,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.6806941880269491,
+        "VQIVYK": 0.6877242640600462
+      },
+      "P301L": {
+        "VQIINK": 0.6806941880269491,
+        "VQIVYK": 0.6877242640600462
+      },
+      "dK280": {
+        "VQIINK": 0.6953819710290684,
+        "VQIVYK": 0.6877242640600462
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 130.9798699620882,
+        "res59_pdb_sasa_P301L": 115.77397247009105,
+        "res59_min_dist_to_VQIINK": 40.63121709678515,
+        "res59_min_dist_to_VQIVYK": 7.705880365053479,
+        "VQIINK_matched_275_279_rsa_wt": 0.6584010216237565,
+        "VQIINK_matched_275_279_rsa_dK280": 0.6953819710290684,
+        "VQIINK_matched_delta": 0.036980949405311936
+      }
+    },
+    {
+      "conformer": 18,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.48485186301110156,
+        "VQIVYK": 0.6568964885935362
+      },
+      "P301L": {
+        "VQIINK": 0.48485186301110156,
+        "VQIVYK": 0.6568964885935362
+      },
+      "dK280": {
+        "VQIINK": 0.5047243522548431,
+        "VQIVYK": 0.6568964885935362
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 132.21615212112275,
+        "res59_pdb_sasa_P301L": 115.08282208630132,
+        "res59_min_dist_to_VQIINK": 51.849438810862814,
+        "res59_min_dist_to_VQIVYK": 10.705710584300784,
+        "VQIINK_matched_275_279_rsa_wt": 0.4587177294174108,
+        "VQIINK_matched_275_279_rsa_dK280": 0.5047243522548431,
+        "VQIINK_matched_delta": 0.04600662283743234
+      }
+    },
+    {
+      "conformer": 19,
+      "n_res": 130,
+      "wt": {
+        "VQIINK": 0.5553497955115513,
+        "VQIVYK": 0.5725418731570742
+      },
+      "P301L": {
+        "VQIINK": 0.5553497955115513,
+        "VQIVYK": 0.5848844443964251
+      },
+      "dK280": {
+        "VQIINK": 0.5226513037488238,
+        "VQIVYK": 0.5725418731570742
+      },
+      "audit": {
+        "res59_pdb_sasa_wt": 57.85975909871442,
+        "res59_pdb_sasa_P301L": 35.688492544780054,
+        "res59_min_dist_to_VQIINK": 31.645066845438087,
+        "res59_min_dist_to_VQIVYK": 3.1284371522930687,
+        "VQIINK_matched_275_279_rsa_wt": 0.4938581825022876,
+        "VQIINK_matched_275_279_rsa_dK280": 0.5226513037488238,
+        "VQIINK_matched_delta": 0.02879312124653627
+      }
+    }
+  ],
+  "scope_note": "Conformationally-fixed (no re-sampling) SASA analysis of the WT ensemble under single-site mutation; does NOT measure mutant conformational redistribution. Complements mutant-MD follow-up.",
+  "audit_summary": {
+    "res59_sasa_changed_P301L": true,
+    "res59_min_dist_to_VQIINK_median": 35.7914167610539,
+    "res59_min_dist_to_VQIVYK_median": 7.47366308140073,
+    "VQIINK_matched_275_279_delta_mean": 0.03278672344719481,
+    "note": "matched delta isolates the exposure change of the SURVIVING VQIINK residues (275-279) from the composition effect of deleting K280 from the 275-280 average"
+  }
+}

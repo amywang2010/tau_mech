@@ -392,6 +392,75 @@ def smooth_color_field(state: SPHState, params: SPHParams, pairs, d,
     return c
 
 
+def color_field_curvature(state: SPHState, params: SPHParams,
+                          pairs, d, e):
+    """Smoothed color field, its gradient, and the renormalized curvature.
+
+    Single source of truth for the CSF interface operators: both
+    :func:`compute_surface_force` and the audit diagnostic
+    (scripts/diag_csf_symmetry.py) use THIS function, so the audit can never
+    silently diverge from the solver.
+
+    Returns (kappa, grad, nhat).
+
+    The divergence stencils below are SYMMETRIC field evaluations (fixed
+    2026-09-02; audit scripts/diag_csf_symmetry.py): like the gradient, the
+    divergence of a FIELD accumulates on BOTH endpoints of every pair, each
+    with its own volume. The original one-sided accumulation (bincount over
+    the first pair endpoint only) saw query_pairs' (min, max) ordering and
+    gave every particle a curvature stencil containing only its
+    higher-indexed neighbours: measured 0.51 of its pairs, NOT
+    permutation-invariant (kappa moved by up to 1.5 under a pure relabel),
+    azimuthally biased on a circle (rim sector means 0.29-0.62 vs 1/R =
+    0.333), and non-conservative (net internal surface force = 10.8% of its
+    own magnitude) - the drift engine of the zero-shear control.
+
+    Per pair (i, j) with e pointing j->i and s = (nhat_j - nhat_i).(dw*e):
+      div_i += V_j * s   and   div_j += V_i * s
+    (same scalar, the OTHER particle's volume; the sign closes because
+    e_ij = -e_ji under the minimum-image wrap). The kernel-sum denominator
+    accumulates the same way plus each particle's own self term.
+    """
+    n = state.n
+    i, j = pairs[:, 0], pairs[:, 1]
+    c = smooth_color_field(state, params, pairs, d,
+                           n_passes=params.n_color_smooth)
+    vol = state.mass / np.maximum(state.rho, params.rho_floor * state.rho0)
+    dw = cubic_spline_dwdr(d, params.h)
+    w = cubic_spline(d, params.h)
+    w0 = cubic_spline(np.zeros(1), params.h)[0]
+    # gradient of the smoothed color field:
+    #   grad_i += V_j (c_j - c_i) dw e ;  grad_j += V_i (c_j - c_i) dw e
+    # (a gradient is a FIELD evaluation - both endpoints accumulate the SAME
+    # sign with their own volumes; the anti-symmetric +f/-f pattern used for
+    # pairwise FORCES is wrong here. It flipped the normal at the outer rim
+    # (n_hat.r_hat = +0.30 instead of -1) which corrupted kappa and EXPANDED
+    # the droplet - caught by scripts/diag_csf_norm.py, 2026-08-05.)
+    dc_i = (c[j] - c[i]) * vol[j] * dw      # weight for particle i
+    dc_j = (c[j] - c[i]) * vol[i] * dw      # weight for particle j
+    idx = np.concatenate([i, j])
+    gx = np.bincount(idx, weights=np.concatenate([dc_i * e[:, 0], dc_j * e[:, 0]]),
+                     minlength=n)
+    gy = np.bincount(idx, weights=np.concatenate([dc_i * e[:, 1], dc_j * e[:, 1]]),
+                     minlength=n)
+    grad = np.stack([gx, gy], axis=1)
+    ng = np.linalg.norm(grad, axis=1)
+    nhat = grad / np.maximum(ng, 1e-12)[:, None]
+    # RENORMALIZED divergence (Adami 2010): divide the raw stencil sum by the
+    # kernel-sum on the same stencil so a truncated interface neighbourhood
+    # does not bias the curvature sign/magnitude. SYMMETRIC accumulation
+    # (both endpoints) as derived in the docstring above.
+    s_pair = np.sum((nhat[j] - nhat[i]) * (dw[:, None] * e), axis=1)
+    div_n_raw = np.bincount(idx, weights=np.concatenate([vol[j] * s_pair,
+                                                         vol[i] * s_pair]),
+                            minlength=n)
+    den = np.bincount(idx, weights=np.concatenate([vol[j] * w, vol[i] * w]),
+                      minlength=n) + vol * w0
+    div_n = div_n_raw / np.maximum(den, 1e-9)
+    kappa = -div_n
+    return kappa, grad, nhat
+
+
 def compute_surface_force(state: SPHState, params: SPHParams,
                           pairs, d, e) -> np.ndarray:
     """Continuum surface force (CSF) acceleration (Brackbill 1992; Adami 2010).
@@ -418,38 +487,8 @@ def compute_surface_force(state: SPHState, params: SPHParams,
     acc = np.zeros((n, 2))
     if params.sigma_surf <= 0 or len(pairs) == 0:
         return acc
-    i, j = pairs[:, 0], pairs[:, 1]
-    c = smooth_color_field(state, params, pairs, d,
-                           n_passes=params.n_color_smooth)
-    vol = state.mass / np.maximum(state.rho, params.rho_floor * state.rho0)
-    dw = cubic_spline_dwdr(d, params.h)
-    w = cubic_spline(d, params.h)
-    w0 = cubic_spline(np.zeros(1), params.h)[0]
-    # gradient of the smoothed color field:
-    #   grad_i += V_j (c_j - c_i) dw e ;  grad_j += V_i (c_j - c_i) dw e
-    # (a gradient is a FIELD evaluation - both endpoints accumulate the SAME
-    # sign with their own volumes; the anti-symmetric +f/-f pattern used for
-    # pairwise FORCES is wrong here. It flipped the normal at the outer rim
-    # (n_hat.r_hat = +0.30 instead of -1) which corrupted kappa and EXPANDED
-    # the droplet - caught by scripts/diag_csf_norm.py, 2026-08-05.)
-    dc_i = (c[j] - c[i]) * vol[j] * dw      # weight for particle i
-    dc_j = (c[j] - c[i]) * vol[i] * dw      # weight for particle j
-    idx = np.concatenate([i, j])
-    gx = np.bincount(idx, weights=np.concatenate([dc_i * e[:, 0], dc_j * e[:, 0]]),
-                     minlength=n)
-    gy = np.bincount(idx, weights=np.concatenate([dc_i * e[:, 1], dc_j * e[:, 1]]),
-                     minlength=n)
-    grad = np.stack([gx, gy], axis=1)
-    ng = np.linalg.norm(grad, axis=1)
-    nhat = grad / np.maximum(ng, 1e-12)[:, None]
-    # RENORMALIZED divergence (Adami 2010): divide the raw stencil sum by the
-    # kernel-sum on the same stencil so a truncated interface neighborhood
-    # does not bias the curvature sign/magnitude
-    pair_term = vol[j] * np.sum((nhat[j] - nhat[i]) * (dw[:, None] * e), axis=1)
-    div_n_raw = np.bincount(i, weights=pair_term, minlength=n)
-    den = np.bincount(i, weights=vol[j] * w, minlength=n) + vol * w0
-    div_n = div_n_raw / np.maximum(den, 1e-9)
-    kappa = -div_n
+    # interface operators (single source of truth; symmetric stencils)
+    kappa, grad, _nhat = color_field_curvature(state, params, pairs, d, e)
     # surface acceleration: a_s = +sigma * kappa * grad(c_tilde) / rho
     acc[:, 0] = params.sigma_surf * kappa * grad[:, 0] / np.maximum(state.rho, 1e-9)
     acc[:, 1] = params.sigma_surf * kappa * grad[:, 1] / np.maximum(state.rho, 1e-9)
