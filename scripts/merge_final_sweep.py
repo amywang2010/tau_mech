@@ -315,10 +315,6 @@ def classify_and_check(rows: list[dict], traces: dict,
         "pass": bool(len(iv) >= 2 and feasible),
         "method": "interval feasibility (greedy), v1.4",
         "per_case": greedy}
-    checks["A2_monotone_D_inf_in_Ca_distinguishable"] = {
-        "pass": bool(len(iv) >= 2 and feasible),
-        "method": "interval feasibility (greedy), v1.4",
-        "per_case": greedy}
     censored = [(r["capillary_number_Ca"], r["taylor_plateau_fit"])
                 for r in sheared
                 if classification.get(str(r["shear_rate_nominal"]), {}).get("class")
@@ -431,19 +427,32 @@ def main() -> None:
     ext_rows, ext_traces = [], {}
     for rd in sorted(sweep_dir.glob("ext_*")):
         rec_p = rd / "sph_shear_sweep.json"
-        if not rec_p.exists() or not json.loads(rec_p.read_text()).get("rows"):
-            print(f"WARNING: {rd.name} has no valid record - skipped")
-            continue
-        rec = json.loads(rec_p.read_text())
-        ext_rows.append(rec["rows"][0])
         tr_p = rd / "sph_traces.npz"
-        if tr_p.exists():
+        if not rec_p.exists() or not tr_p.exists():
+            print(f"WARNING: {rd.name} incomplete (complete record AND trace "
+                  f"required) - skipped; supersession only on complete data")
+            continue
+        try:
+            rec = json.loads(rec_p.read_text())
+        except json.JSONDecodeError as exc:
+            print(f"WARNING: {rd.name} record not parseable ({exc}) - skipped")
+            continue
+        if not rec.get("rows"):
+            print(f"WARNING: {rd.name} record empty - skipped")
+            continue
+        try:
             t = np.load(tr_p, allow_pickle=True)
             tr = t["traces"].item() if getattr(t["traces"], "ndim", 1) == 0 \
                 else t["traces"]
-            key = str(rec["rows"][0]["shear_rate_nominal"])
-            if key in tr:
-                ext_traces[key] = tr[key]
+        except Exception as exc:  # any read failure = incomplete, not physics
+            print(f"WARNING: {rd.name} trace unreadable ({exc}) - skipped")
+            continue
+        key = str(rec["rows"][0]["shear_rate_nominal"])
+        if key not in tr:
+            print(f"WARNING: {rd.name} record has no trace for {key} - skipped")
+            continue
+        ext_rows.append(rec["rows"][0])
+        ext_traces[key] = tr[key]
     superseded = []
     short_traces = {}   # pre-supersession copies, for the A5 integrity check
     for er in ext_rows:
@@ -477,13 +486,16 @@ def main() -> None:
         "dt": meta.get("dt"), "eq_steps": meta.get("eq_steps"),
         "rows": rows,
         "extended_rates": sorted(superseded),
-        "acceptance_version": "v1.4 (v1.2 below-noise-floor censoring "
+        "acceptance_version": "v1.4.1 (v1.2 below-noise-floor censoring "
                               "pre-registered 2026-09-02 21:40; v1.3 pointwise "
                               "A1b + one-sided A3 amended pre-registered "
                               "2026-09-02 23:15; v1.4 window-trust rule, "
                               "extension protocol and A5 integrity check "
                               "pre-registered 2026-09-03 ~09:20, all before "
-                              "wave-3 completion)",
+                              "wave-3 completion; v1.4.1 merge hardening - "
+                              "supersession requires a complete extension "
+                              "record+trace, 2026-09-03, before extension "
+                              "data existed)",
         "note": ("merged from per-rate runs (wave driver, 2-way parallel); "
                  "validated solver (CSF symmetric stencil, zero-shear gate "
                  "PASS); fresh Laplace calibration sigma_eff = 1.0641; "
