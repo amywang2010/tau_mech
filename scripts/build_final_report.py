@@ -79,9 +79,13 @@ def main() -> None:
                  "scripts/merge_final_sweep.py")
     if ammend:
         h, _, dt = ammend.partition(" ")
-        A(f"- Acceptance-rule pre-registration: commit `{h}` ({dt.strip()}) "
-          "**[rule]** — below-noise-floor censoring registered *before* "
-          "wave-2/3 data existed")
+        ammend13 = git("log", "-S", "pointwise", "--format=%h %ci", "--",
+                       "scripts/merge_final_sweep.py")
+        h13, _, dt13 = (ammend13.partition(" ") if ammend13 else ("", "", ""))
+        A(f"- Acceptance-rule pre-registration chain: v1.2 censoring `{h}` "
+          f"({dt.strip()}); v1.3 pointwise-A1b/one-sided-A3 `{h13}` "
+          f"({dt13.strip()}) — all committed *before* wave-2/3 data existed "
+          "**[rule]**")
     A("")
 
     # ---- 1. solver validation --------------------------------------------
@@ -172,7 +176,7 @@ def main() -> None:
     A("")
     if not ("__PENDING__" in sweep or "__PENDING__" in summary):
         checks = summary.get("acceptance_pre_registered", {})
-        A(f"Pre-registered acceptance (v1.2): "
+        A(f"Pre-registered acceptance (v1.3): "
           f"**{'ALL PASS' if summary.get('all_acceptance_pass') else 'NOT ALL PASS'}** "
           f"— " + "; ".join(f"{k}: {'pass' if v.get('pass') else 'FAIL'}"
                             for k, v in checks.items()) + " **[machine/rule]**.")
