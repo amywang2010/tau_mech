@@ -60,7 +60,7 @@ archives are nested gzip tarballs (outer `.tar.gz` → inner `.tar.gz` → PDB)
 streamed directly, never extracted to disk. Original sources for provenance:
 https://proteinensemble.org/entries/PED00422/ (and …/PED00192/, …/PED00443/).
 
-The 55-test suite does **not** need the raw data (tests build their own
+The 62-test suite does **not** need the raw data (tests build their own
 fixtures), so `pip install -r requirements.txt && pytest tests/` works
 immediately after cloning.
 
@@ -151,12 +151,14 @@ Shrake–Rupley 1973, Chothia 1976, Tien et al. 2013, Kyte–Doolittle 1982.
 
 ## 6. Validation
 
-- **Unit tests** (46, all passing): parser (multi-model, heavy filtering,
+- **Unit tests** (62, all passing): parser (multi-model, heavy filtering,
   nested-archive streaming, REMARK metadata), numbering/motif mapping, geometry
   (Rg, end-to-end, contacts), SASA (single-sphere analytic limit, occlusion,
   order invariance), graph construction (edge semantics, dedup, no self-loops),
   SPH core (kernel normalization, pair search, lattice density, deformation
-  descriptors, transient fit, step stability, wall pinning).
+  descriptors, transient fit, step stability, wall pinning), CSF operator
+  symmetry (3 regression tests), Couette profile measurement layer
+  (particle conservation, exact-fit recovery).
 - **Experimental anchors** (reported by `scripts/summarize.py`):
   - K18 SAXS Rg ≈ 38 Å (Mukrasch et al. 2005, JBC; He et al. 2024, JCIM) —
     computed ensemble mean ≈ 36 Å (equal-weight; within ~5%)
@@ -202,48 +204,63 @@ Shrake–Rupley 1973, Chothia 1976, Tien et al. 2013, Kyte–Doolittle 1982.
    Both were caught by the test suite + real-data smoke run and fixed; the
    tests that caught them are retained (tests/test_numbering.py,
    tests/test_io.py).
-6. **Phase 3 zero-shear droplet drift (OPEN)**. The no-shear control of the SPH
-   shear sweep shows the droplet deformation `D` drifting monotonically from
-   ~0.009 to ~0.078 over the ~406-time-unit measurement window — a spurious
-   ~7 % elongation under *zero* applied shear, larger than the low-Ca signal.
-   The drift is solver-level (present with all surface forces disabled) and was
-   missed because prior validation only ran ~8–48 time units. Full record,
-   primary data, and options in `PHASE3_SPH_DRIFT_FINDING.md`. The
-   physiological conclusion (Ca ~ 1e-3 → negligible deformation) rests on the
-   analytic Taylor limit and does not depend on the affected sweep.
+6. **Phase 3 zero-shear droplet drift (RESOLVED 2026-09-02)**. The no-shear
+   control originally showed `D` drifting from ~0.009 to ~0.078 — a spurious
+   elongation under *zero* applied shear. Root cause found by operator-level
+   audit and **fixed**: the CSF curvature stencil was pairwise-asymmetric
+   (net internal force 10.8% of |f_surf|); after the symmetric-stencil fix
+   the solver is permutation-invariant to ~1e-15 and the full-duration
+   zero-shear gate (6 pre-registered criteria) **passes all criteria**
+   (trend 1.35e-5 vs limit 5e-5; max|D−D₀| 0.0098 vs limit 0.02). Primary
+   record: `outputs/sph/audits/zero_shear_baseline.json`; full audit trail:
+   `PHASE3_CSFFIX_AUDIT.md`; the original open finding is preserved in
+   `PHASE3_SPH_DRIFT_FINDING.md` (now carries a resolution banner).
 
 ## 9. Roadmap to the remaining phases (scientific-rigor notes)
 
 - **Phase 2 — EDA** (COMPLETE): distributional statistics with proper tests
   (K–S + Cohen's d), rASA interpretation, PCA/t-SNE clustering. Results in
   `PHASES_2_5_REPORT.md`.
-- **Phase 3 — SPH** (engine + validation complete; **shear-sweep results are
-  BLOCKED by a spurious zero-shear droplet drift — see
-  `PHASE3_SPH_DRIFT_FINDING.md`**): CPU
-  numpy+scipy WCSPH engine validated against analytic Couette (R²=0.998,
-  symmetric profile) and Laplace (σ_eff = 0.998 after the factor-2 fix below)
-  limits; no-shear control included; kernel normalization audited (published
-  Monaghan 1992 form). **Correctness audit (2026-08-11)**: the periodic-x
-  neighbour search, the seam duplicate in the lattice packing, the x-wrap fold
-  and the wall-lattice alignment were all fixed — these were the root cause of
-  a spurious, sigma-independent "droplet shape oscillation" that an artificial
-  velocity-drag quench had masked (that parameter is now removed). **Second
-  audit (2026-08-14)**: a velocity-Verlet factor-of-2 bug (the CSF surface
-  force was applied only in the second half-step, halving its dt weight) made
-  the Laplace jump read 0.5·σ/R instead of σ/R; it was mis-attributed to a
-  "band-split" and now has a regression test
-  (test_step_applies_csf_in_both_half_steps). See PHASES_2_5_REPORT.md, CSF
-  audit trail item 8. **Sweep runtime**: the single-threaded engine runs
-  ~0.34 s/step, so the 6-rate sweep (~5.5e5 steps) is ~31 h sequential; the
-  rates are independent (each rebuilds its own droplet), so
-  `scripts/sph_sweep_parallel.py` runs them concurrently on separate cores
-  (~6x wall-clock speedup, no change to physics). **Framing**: physiological
-  shear (~0.1–1 Pa) is far too
-  weak to deform a *single* 10 nm protein directly (thermal forces dominate);
-  the mechanistically defensible pathway is tissue-scale shear →
-  droplet/condensate deformation → altered local concentration/interfacial
-  stress → APR exposure. The manuscript should state this causal chain
-  explicitly. Results in `PHASES_2_5_REPORT.md`.
+- **Phase 3 — SPH** (engine + validation complete; **zero-shear gate PASSED
+  2026-09-02 after the CSF symmetric-stencil fix; final physiological sweep
+  running under the pre-registered acceptance protocol**): CPU
+  numpy+scipy WCSPH engine validated against analytic Couette (R² = 0.998,
+  symmetric profile) and Laplace limits (fresh fixed-solver calibration:
+  σ_eff = 1.064 = 106.4% of input, linearity dP vs 1/R = 0.9999, per-radius
+  dP·R converging toward σ_input as h/R → 0; both estimators carried in
+  `outputs/sph/laplace_calibration.json`). No-shear control included.
+  Kernel normalization audited (published Monaghan 1992 form).
+  **Correctness audit (2026-08-11)**: the periodic-x neighbour search, the
+  seam duplicate in the lattice packing, the x-wrap fold and the
+  wall-lattice alignment were all fixed — these were the root cause of a
+  spurious, sigma-independent "droplet shape oscillation" that an
+  artificial velocity-drag quench had masked (that parameter is now
+  removed). **Second audit (2026-08-14)**: a velocity-Verlet factor-of-2
+  bug (the CSF surface force was applied only in the second half-step,
+  halving its dt weight) made the Laplace jump read 0.5·σ/R instead of σ/R;
+  it was mis-attributed to a "band-split" and now has a regression test
+  (test_step_applies_csf_in_both_half_steps). **Third audit (2026-09-02)**:
+  the CSF curvature stencil was pairwise-asymmetric (net internal force
+  10.8%); after the symmetric-stencil fix the solver is
+  permutation-invariant to ~1e-15, the full-duration zero-shear gate passes
+  all 6 pre-registered criteria, the Laplace calibration was re-measured on
+  the fixed solver, and the Couette slope deficit was attributed by
+  diagnostic (XSPH + wall momentum-transmission slip; resolution study
+  pre-registered) — **the acceptance band was not relaxed post hoc**.
+  Final sweep: 6 rates incl. no-shear control, pre-registered acceptance
+  v1.2 (below-noise-floor censoring registered at commit `b71aec6`),
+  merged canonical record `outputs/sph/sph_shear_sweep.json`. **Sweep
+  runtime**: ~0.32 s/step at 2-way contention; staged 2-way waves
+  (evidence-based contention level). **Framing**: physiological
+  shear (~0.1–1 Pa) is far too weak to deform a *single* 10 nm protein
+  directly (thermal forces dominate); the mechanistically defensible
+  pathway is tissue-scale shear → droplet/condensate deformation →
+  altered local concentration/interfacial stress → APR exposure. The
+  manuscript states this causal chain explicitly; the coupling record
+  `outputs/coupling/coupling_sph_apr.json` quantifies the bounded
+  transfer (affine upper bound: mechanically induced ΔAPR1 rASA ≈ 0.45%
+  of native conformational heterogeneity at 1 Pa). Results in
+  `PHASES_2_5_REPORT.md` and `outputs/final_report.md`.
 - **Phase 4 — GNN** (COMPLETE): PyTorch Geometric dataset from `models/*.npz`;
   GCN/GAT/GraphSAGE/MLP baselines; structure-aware graph-level splits;
   cross-ensemble transfer matrix; GNNExplainer; ablations (incl. the corrected
@@ -251,9 +268,20 @@ Shrake–Rupley 1973, Chothia 1976, Tien et al. 2013, Kyte–Doolittle 1982.
 - **Phase 5 — ML evaluation** (COMPLETE): ROC/PR/confusion matrices, training
   curves, model comparison, transfer matrix, embeddings viz, GNNExplainer,
   permutation importance, ablations, seed control. Results in
-  `PHASES_2_5_REPORT.md`. **Validation against pathogenic mutants** (e.g.,
-  P301L, ΔK280) is the documented next experiment: does the pipeline predict
-  higher APR exposure for aggregation-promoting mutations?
+  `PHASES_2_5_REPORT.md`. **Mutation validation** (COMPLETE 2026-09-02):
+  conformationally-fixed mutate-and-recompute SASA on the WT ensemble
+  (`scripts/mutation_sasa_validation.py` → `outputs/mutation/mutation_sasa.json`):
+  P301L shows exactly zero static-packing effect on APR exposure (verified:
+  mutation applied, P301 35.8 Å from VQIINK — outside any occlusion sphere;
+  redistribution effects flagged for MD follow-up); dK280 raises surviving
+  VQIINK-residue exposure by +0.033 rASA (matched-residue comparison
+  deconfounds the motif-composition artifact). **Mechanical coupling**
+  (COMPLETE): `scripts/coupling_sph_apr.py` →
+  `outputs/coupling/coupling_sph_apr.json` — the SPH-measured droplet
+  response composed with ensemble sensitivity gives a falsifiable effect
+  size (quantified null at physiological Ca). Machine-generated summary of
+  all phases: `outputs/final_report.md`
+  (`scripts/build_final_report.py`, strict mode).
 
 ## 10. Reproducibility checklist
 
@@ -261,7 +289,8 @@ Shrake–Rupley 1973, Chothia 1976, Tien et al. 2013, Kyte–Doolittle 1982.
 - [x] SHA-256 of raw data (provenance.json)
 - [x] all numeric protocol parameters recorded (config_used.json)
 - [x] unit tests + real-data smoke tests
-- [ ] lock file (`pip freeze > requirements.lock`) — recommended before submission
+- [x] lock file (`requirements.lock`, pip freeze of the validated environment, committed 2026-09-02)
 - [x] git repository with the raw archives bundled via Git LFS (byte-for-byte;
       hashes in provenance.json)
-- [ ] resolve the Phase 3 zero-shear drift (see `PHASE3_SPH_DRIFT_FINDING.md`)
+- [x] resolve the Phase 3 zero-shear drift (RESOLVED 2026-09-02 — see §8.6,
+      `PHASE3_CSFFIX_AUDIT.md`, `outputs/sph/audits/zero_shear_baseline.json`)
