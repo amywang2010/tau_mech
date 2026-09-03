@@ -297,8 +297,36 @@ def main() -> None:
       f"{pred1['dAPR_rASA']:.2e} = {100*pred01['fraction_of_native_sd']:.2f}%.."
       f"{100*pred1['fraction_of_native_sd']:.2f}% of the native conformational "
       f"heterogeneity (SD {sd:.3f}) **[machine]**.")
-    A(f"- Quantified null at physiological shear: even under an upper-bound "
-      f"strain transfer, mechanically induced APR1 exposure change is "
+    # Data-anchored chain: the physiological Ca values lie BELOW the trusted
+    # measured range, so the SPH anchor enters as a MONOTONICITY UPPER BOUND
+    # (D <= 0.0148), not an interpolation - reported as such, never blurred
+    # into a measurement claim.
+    anch = coup.get("sph_anchor", {})
+    if anch.get("used"):
+        bm = coup["predictions"]["sph_measured_affine_k1"][
+            "apr1_vs_rg|tau_1.0_Pa"]
+        bc = coup["predictions"]["sph_measured_compliant_k0.1"][
+            "apr1_vs_rg|tau_1.0_Pa"]
+        A(f"- SPH-measured anchor (used = {anch['used']}): physiological Ca "
+          f"lies below the trusted measured range "
+          f"[{min(p[0] for p in anch['trusted_points']):.3f}, "
+          f"{max(p[0] for p in anch['trusted_points']):.3f}], so the anchor "
+          f"enters as a MONOTONICITY UPPER BOUND D <= "
+          f"{bm['D_input']:.4f} (from the tightest classified point; "
+          f"window-limited rate-0.001 bound carried in the record) - affine "
+          f"transfer bound Delta-APR1 rASA <= {bm['dAPR_rASA']:.2e} = "
+          f"{100*bm['fraction_of_native_sd']:.2f}% of native SD; compliant "
+          f"transfer bound <= {bc['dAPR_rASA']:.2e} = "
+          f"{100*bc['fraction_of_native_sd']:.2f}% **[machine]**.")
+        A(f"- Data-anchored quantified null: even at the monotonicity bound, "
+          f"mechanically induced APR1 exposure change is >= "
+          f"{1.0/(bm['fraction_of_native_sd'] + 1e-30):.0f}x (affine) / "
+          f">= {1.0/(bc['fraction_of_native_sd'] + 1e-30):.0f}x (compliant) "
+          f"smaller than the intrinsic ensemble variability **[machine]**.")
+    A(f"- Analytic-reference quantified null (Taylor-law D = "
+      f"{D_map['tau_1.0_Pa']:.2e} at 1 Pa, an extrapolation beyond the "
+      f"measured range; the data-anchored bound above supersedes it): "
+      f"mechanically induced APR1 exposure change is "
       f"~{1.0/(pred1['fraction_of_native_sd'] + 1e-30):.0f}x smaller than the "
       f"intrinsic ensemble variability **[machine]**; detectable mechanical "
       f"effects would require supraphysiological stress or an amplification "
