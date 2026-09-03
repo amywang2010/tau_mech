@@ -354,6 +354,12 @@ def main():
         predictions["sph_measured_affine_k1"] = predict(D_cons, "affine_meas")
         predictions["sph_measured_compliant_k0.1"] = predict(D_cons,
                                                              "compliant_meas")
+        # provenance: label every prediction entry with whether its D input
+        # was interpolated (trusted) or a monotonicity upper bound
+        for block in ("sph_measured_affine_k1", "sph_measured_compliant_k0.1"):
+            for k, entry in predictions[block].items():
+                tau_key = k.split("|", 1)[1]
+                entry["input_type"] = d_meas[tau_key]["type"]
 
     # Ca sweep for the transfer curve figure. The analytic Taylor law is the
     # labeled small-Ca reference; the measured SPH anchor is overlaid where
