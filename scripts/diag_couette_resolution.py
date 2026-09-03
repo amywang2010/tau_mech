@@ -22,7 +22,12 @@ v2 design (the study the pre-registration specifies)
   convergence design). All h-denominated model parameters (wall layers,
   central zone, repulsion/attraction cutoffs, switch width) are defined in
   units of h in the solver, so the physical configuration is IDENTICAL
-  across levels; only the discretization varies.
+  across levels; only the discretization varies. dt scales WITH h
+  (dt = 0.008 * h), pinning the Courant number at 0.08 - the value at
+  which EVERY prior validation of this solver ran - so Reynolds (U*H/nu
+  = 346) and Courant numbers are identical at all levels and the ONLY
+  variable across levels is h. Window step counts scale accordingly:
+  5700 / 8550 / 11400 steps for the same simulated time t = 45.6.
 * Geometry: same exact-row domains as v1 (fluid rows 19/29/39 at spacings
   0.5 / 1/3 / 0.25; no-slip planes one row outside the fluid).
 * Quasi-steady guard (replaces v1's ambiguous viscous-time bookkeeping):
@@ -46,8 +51,9 @@ v2 design (the study the pre-registration specifies)
   (b) slip_frac resolution-independent => wall-coupling FORMULATION
       property; the acceptance band is NOT relaxed either way.
 
-Cost: 3 levels x 8550 steps serial ~= 5 h nominal on this machine (v1
-measured ~0.7 s/step); one escalation on every level ~ 8 h worst case.
+Cost: ~6 h uncontended serial (particle-steps: 5700x912 + 8550x2088 +
+11400x3744 at the measured 3.3e-4 s/particle-step); one escalation on
+every level roughly doubles the finer levels (~12 h worst case).
 
 Run:  python scripts/diag_couette_resolution.py [--smoke]
 """
@@ -68,10 +74,11 @@ from tau_mech.sph import SPHParams, validate_couette  # noqa: E402
 OUT = Path("outputs/sph/audits/couette_resolution_study.json")
 V1_BACKUP = Path("outputs/sph/audits/couette_resolution_study_v1_fixedh.json")
 SPACING_ROWS = {0.5: 19, 1.0 / 3.0: 29, 0.25: 39}  # exact fluid rows per level
-BASE_STEPS = 5700          # t = 45.6: all v1 levels measured steady here
+BASE_TIME = 45.6           # base window length (all v1 levels steady here);
+                           # per-level step count = BASE_TIME / dt(h)
 STEADY_TOL = 0.005         # max |slip(1.5T) - slip(T)| accepted as steady
 R2_MIN = 0.99              # linearity floor on every window
-MAX_ESCALATIONS = 1        # window escalation cap (12825 steps, then abort)
+MAX_ESCALATIONS = 1        # window escalation cap (1.5x, once, then abort)
 V1_COARSE_SLIP = 0.8520350443108875  # regression anchor (v1 record, spacing 0.5)
 
 
@@ -98,7 +105,9 @@ def run_level(spacing: float, n_rows: int, smoke: bool):
     # is identical across levels - only the discretization varies.
     domain = domain_for(spacing, n_rows)
     H_wall = (n_rows + 1) * spacing * np.sqrt(3.0) / 2.0
-    dt = 0.008
+    dt = 0.008 * h  # dt proportional to h: CFL = c_s*dt/h pinned at 0.08,
+    # the value at which every prior validation of this solver ran - so
+    # Re and CFL are identical at all levels and only h varies.
     nu = params.mu_solvent / 1.0  # rho0 = 1; nominal kinematic viscosity
     tau_nom = H_wall**2 / (nu * np.pi**2)  # reported, NOT used to size runs
     cfl = dt * params.c_s / h
@@ -113,7 +122,7 @@ def run_level(spacing: float, n_rows: int, smoke: bool):
         return r, {"n_steps": n_steps, "steady": None, "escalations": 0}
 
     windows, escalations, steady = [], 0, False
-    n_steps = BASE_STEPS
+    n_steps = int(np.ceil(BASE_TIME / dt))  # t = 45.6 at EVERY level
     results = {}
     while True:
         r = validate_couette(params=params, n_steps=n_steps, dt=dt,
@@ -159,11 +168,12 @@ def run_level(spacing: float, n_rows: int, smoke: bool):
 
 
 def level1_anchor(guard: dict) -> dict:
-    """Regression anchor: level 1 FIRST window (spacing 0.5, h=1.0, 5700
-    steps) must reproduce the v1 coarse run bit-for-bit (deterministic
-    solver). The FIRST window is the anchor - not the final one - because
-    v1's 0.8520 was measured at exactly t = 45.6; later (longer) windows
-    may legitimately drift by up to the steady tolerance. Checked
+    """Regression anchor: level 1 FIRST window (spacing 0.5, h=1.0,
+    dt=0.008, 5700 steps) must reproduce the v1 coarse run bit-for-bit
+    (deterministic solver). Level 1 uses the same h, dt and window as v1's
+    coarse run, so the FIRST window is the anchor - not the final one -
+    because v1's 0.8520 was measured at exactly t = 45.6; later (longer)
+    windows may legitimately drift by up to the steady tolerance. Checked
     immediately after level 1 so a determinism failure cannot waste the
     remaining compute budget.
     """
@@ -273,14 +283,15 @@ def main() -> None:
             "convergence. v2 tests h-convergence directly."),
         "solver_state": "post CSF-symmetric-stencil fix + lattice-row profile "
                         "binning (2026-09-02)",
-        "protocol": ("exact-row domains; h = 2*spacing at every level; "
-                     "quasi-steady guard (two consecutive windows, "
-                     "|dslip| <= 0.005, r2c >= 0.99, base window t = 45.6 "
-                     "= the length at which all v1 levels measured steady); "
-                     "U_wall = 2; as-delivered dissipators (alpha=0.1, "
-                     "xsph=0.1); mu_solvent = 0.05 (as-delivered nominal); "
-                     "slip = linear extrapolation of the bulk fit to both "
-                     "no-slip planes"),
+        "protocol": ("exact-row domains; h = 2*spacing and dt = 0.008*h "
+                     "(CFL pinned at 0.08, Re = 346 identical at all "
+                     "levels); quasi-steady guard (two consecutive "
+                     "windows, |dslip| <= 0.005, r2c >= 0.99, base window "
+                     "t = 45.6 = the length at which all v1 levels "
+                     "measured steady); U_wall = 2; as-delivered "
+                     "dissipators (alpha=0.1, xsph=0.1); mu_solvent = 0.05 "
+                     "(as-delivered nominal); slip = linear extrapolation "
+                     "of the bulk fit to both no-slip planes"),
         "regression_anchor": anchor,
         "configs": rows,
         "steady_guards": guards,
