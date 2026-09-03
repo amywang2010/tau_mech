@@ -26,6 +26,10 @@ SECOND-TO-LAST arrow quantitative and falsifiable:
      monotonicity of D(Ca), using the tightest classified sweep point
      (censored bound / interval hi / trusted plateau). The bound is
      parameter-free: every input is read from the canonical merged record.
+     A merged verdict of FAIL is accepted ONLY as the pre-declared A2
+     saturation outcome (all integrity checks passing); the anchor is then
+     restricted to the monotone-feasible prefix and the excluded turnover
+     points are reported separately.
   3. STRAIN TRANSFER (bounded): a conformation embedded in an affinely
      deformed condensate experiences at most the condensate strain:
      dRg/Rg <= D (compliance factor k in (0, 1]; k = 1 is the affine UPPER
@@ -101,12 +105,19 @@ def load_sph_anchor(sweep_json=SPH_SWEEP_JSON, summary_json=SPH_SUMMARY_JSON):
     if not sweep_json.exists():
         return None, f"canonical sweep record missing: {sweep_json}"
     rec = json.loads(sweep_json.read_text())
-    verdict_class = None
+    # The summary record owns the acceptance data (verdict_class,
+    # acceptance_notes.classification, acceptance_pre_registered); the
+    # merged record owns the rows. Schema verified against the real
+    # outputs on 2026-09-03.
+    summary = None
     if summary_json.exists():
-        verdict_class = json.loads(summary_json.read_text()).get("verdict_class")
+        summary = json.loads(summary_json.read_text())
+    else:
+        return None, f"acceptance summary record missing: {summary_json}"
+    verdict_class = (summary or {}).get("verdict_class")
+    notes = ((summary or {}).get("acceptance_notes", {}) or {})
     cls_map = {}
-    for key, c in (rec.get("acceptance_notes", {})
-                   .get("classification", {}) or {}).items():
+    for key, c in (notes.get("classification", {}) or {}).items():
         cls_map.setdefault(str(float(key)), c.get("class"))
     trusted, window_limited, below_floor = [], [], []
     for r in rec.get("rows", []):
@@ -121,26 +132,80 @@ def load_sph_anchor(sweep_json=SPH_SWEEP_JSON, summary_json=SPH_SUMMARY_JSON):
             trusted.append((float(ca), float(r["taylor_plateau_fit"]),
                             float(rate)))
         elif cls == "window_limited":
-            iv = ((rec.get("acceptance_notes", {})
-                   .get("classification", {}) or {})
+            iv = ((notes.get("classification", {}) or {})
                   .get(str(float(rate)), {}).get("D_inf_interval"))
             if iv is None:
                 iv = [r.get("taylor_final"), r.get("taylor_plateau_fit")]
             window_limited.append((float(ca), [float(iv[0]), float(iv[1])],
                                    float(rate)))
         elif cls == "below_noise_floor":
-            ub = ((rec.get("acceptance_notes", {})
-                   .get("classification", {}) or {})
+            ub = ((notes.get("classification", {}) or {})
                   .get(str(float(rate)), {}).get("D_inf_censored_upper"))
             below_floor.append((float(ca), float(ub), float(rate)))
     if len(trusted) < 2:
         return None, (f"fewer than 2 trusted points in the merged record "
                       f"(found {len(trusted)}); merge verdict: {verdict_class}")
     trusted.sort()
+
+    # Pre-registered failure handling. A merged verdict of FAIL triggers the
+    # analytic-only fallback UNLESS the single failing pre-registered check
+    # is A2 (monotonicity) AND every integrity check passes - the exact
+    # outcome declared in advance as "Interpretation I: physical Taylor
+    # saturation" (docs/A2_TAYLOR_SATURATION_PREDICTION.md, committed
+    # before extension data existed). In that case the anchor is restricted
+    # to the monotone-feasible prefix: the turnover region is excluded from
+    # interpolation AND from monotonicity bounding (monotonicity is used
+    # only where the data itself supports it), and the excluded points are
+    # carried separately as 'turnover_points' so the full curve is still
+    # reported, as the pre-declared interpretation requires.
+    pre = (summary or {}).get("acceptance_pre_registered", {}) or {}
+    failed = {k for k, v in pre.items()
+              if isinstance(v, dict) and v.get("pass") is False}
+    a2_key = "A2_monotone_D_inf_in_Ca_distinguishable"
+    a2_only = failed == {a2_key}
+    if verdict_class == "FAIL" and not a2_only:
+        others = sorted(failed) if failed else "unspecified"
+        return None, (f"merged sweep verdict_class is FAIL on non-A2 "
+                      f"check(s): {others} - the measured anchor is not used")
+    turnover = []
+    a2_status = "not_failed"
+    if a2_only:
+        per_case = pre[a2_key].get("per_case", []) or []
+        prefix_hi = None
+        for case in per_case:  # Ca-sorted by the merge script
+            if case.get("feasible"):
+                prefix_hi = float(case["Ca"])
+            else:
+                break
+        if prefix_hi is None:
+            return None, "A2 failed with no feasible prefix - anchor unusable"
+        # per_case Ca values are display-rounded (4 decimals) in the summary;
+        # match the exact row Ca by nearest log-space distance. Unambiguous:
+        # rounding error ~1e-5 dex vs inter-rate spacing ~0.48 dex.
+        prefix_hi_exact = max(
+            (p[0] for p in trusted
+             if abs(np.log10(p[0]) - np.log10(prefix_hi)) < 0.01),
+            default=None)
+        if prefix_hi_exact is None:
+            return None, ("A2 feasible prefix does not match any measured "
+                          "point - anchor unusable")
+        turnover = [p for p in trusted if p[0] > prefix_hi_exact]
+        trusted = [p for p in trusted if p[0] <= prefix_hi_exact]
+        window_limited = [p for p in window_limited
+                          if p[0] <= prefix_hi_exact]
+        below_floor = [p for p in below_floor if p[0] <= prefix_hi_exact]
+        a2_status = ("fail_pre_declared_saturation; anchor restricted to "
+                     f"the monotone-feasible prefix (Ca <= {prefix_hi_exact:g})")
+        if len(trusted) < 2:
+            return None, ("fewer than 2 trusted points in the A2-feasible "
+                          f"prefix (found {len(trusted)})")
     return {
         "trusted_points": trusted,
         "window_limited": window_limited,
         "below_noise_floor": below_floor,
+        "turnover_points": turnover,
+        "a2_status": a2_status,
+        "a2_only_pre_declared": bool(a2_only),
         "verdict_class": verdict_class,
         "acceptance_version": rec.get("acceptance_version"),
         "ca_trusted_range": [trusted[0][0], trusted[-1][0]],
@@ -224,6 +289,40 @@ def selftest():
     b_lo = bound_below_range(min(ca_phys), anchor)
     assert 0.0 < b_hi <= 0.7433 + 1e-12   # bounded by a classified point
     assert b_lo <= b_hi + 1e-15           # smaller Ca -> tighter-or-equal
+
+    # pre-declared A2-saturation restriction (as produced by load_sph_anchor
+    # on a FAIL(A2-only) record): the turnover point is excluded from
+    # interpolation AND from monotonicity bounding
+    sat = {"trusted_points": [(0.0543, 0.0471, 0.003),
+                              (0.1945, 0.1987, 0.01),
+                              (0.5208, 0.8382, 0.03)],
+           "window_limited": [(0.0215, [0.0148, 0.0148], 0.001)],
+           "below_noise_floor": [],
+           "turnover_points": [(1.7794, 0.6887, 0.1)],
+           "verdict_class": "FAIL",
+           "a2_status": "fail_pre_declared_saturation",
+           "a2_only_pre_declared": True,
+           "acceptance_version": "selftest",
+           "ca_trusted_range": [0.0543, 0.5208]}
+    assert D_SPH(0.5208, sat) == 0.8382        # prefix node still exact
+    try:
+        D_SPH(1.7794, sat)
+        raise AssertionError("turnover point not excluded from interpolation")
+    except ValueError:
+        pass
+    assert bound_below_range(0.01, sat) == 0.0148   # window-limited hi binds
+    assert bound_below_range(0.001, sat) == 0.0148
+    # monotonicity bounding does NOT see turnover points: for a Ca in the
+    # gap between the prefix end (0.5208) and the turnover (1.7794), the
+    # only higher-Ca point is the turnover itself - excluded because the
+    # data refutes monotonicity there - so NO bound exists and the query
+    # must refuse
+    try:
+        bound_below_range(0.6, sat)
+        raise AssertionError("gap query not refused")
+    except ValueError:
+        pass
+
     # refusal outside the range
     for bad in (0.01, 5.0):
         try:
@@ -233,7 +332,8 @@ def selftest():
             pass
     print("selftest OK: interpolation exact at nodes, monotone inside "
           "range, physiological Ca REFUSED below range and bounded by "
-          "monotonicity, extrapolation refused")
+          "monotonicity, A2-saturation restriction enforced, "
+          "extrapolation refused")
 
 
 def sensitivity(df, x_col, y_col, n_boot=10000, seed=20260902):
@@ -295,7 +395,10 @@ def main():
                                  "trusted range; similarity mapping justified "
                                  "by identical lambda = 10")}
     if anchor is not None:
-        if anchor.get("verdict_class") == "FAIL":
+        if (anchor.get("verdict_class") == "FAIL"
+                and not anchor.get("a2_only_pre_declared", False)):
+            # defensive: the loader already refuses this case; kept so a
+            # future loader change cannot silently use an invalid anchor
             sph_anchor_block["used"] = False
             sph_anchor_block["reason_unavailable"] = (
                 "merged sweep verdict_class is FAIL - the measured anchor "
@@ -305,7 +408,9 @@ def main():
                 k: anchor[k] for k in ("trusted_points", "window_limited",
                                        "below_noise_floor", "verdict_class",
                                        "acceptance_version",
-                                       "ca_trusted_range")})
+                                       "ca_trusted_range",
+                                       "turnover_points", "a2_status",
+                                       "a2_only_pre_declared")})
             d_meas = {}
             for k, v in Ca.items():
                 try:
@@ -324,6 +429,13 @@ def main():
             sph_anchor_block["D_conservative_scalar"] = {
                 k: (e["D"] if "D" in e else e["D_upper"])
                 for k, e in d_meas.items()}
+            if anchor.get("a2_only_pre_declared"):
+                sph_anchor_block["note_fail_a2"] = (
+                    "verdict FAIL(A2 only): the pre-declared Taylor-"
+                    "saturation outcome (docs/"
+                    "A2_TAYLOR_SATURATION_PREDICTION.md); the anchor is "
+                    "restricted to the monotone-feasible prefix and the "
+                    "turnover points are reported separately")
 
     # ---- 3+4. prediction with bounded strain transfer ---------------------
     rg_mean = float(df["rg_equal_weight"].mean())
@@ -450,6 +562,11 @@ def main():
             "point (censored bound / interval hi / trusted plateau); the "
             "bound is parameter-free and labeled, never an extrapolated "
             "point estimate",
+            "a merged verdict FAIL is accepted ONLY as the pre-declared A2 "
+            "saturation outcome (every integrity check passing); in that "
+            "case the anchor is restricted to the monotone-feasible prefix "
+            "and the excluded turnover points are reported separately "
+            "(docs/A2_TAYLOR_SATURATION_PREDICTION.md)",
             "the analytic Taylor law (valid Ca << 1, Newtonian) is retained "
             "only as the labeled reference curve",
             "affine strain transfer is an UPPER bound (k <= 1); k = 0.1 "
@@ -508,6 +625,12 @@ def main():
             ax.plot([p[0] for p in bf], [p[1] for p in bf],
                     "v", color="tab:gray", ms=6,
                     label="below noise floor (censored upper bound)")
+        tp = anchor.get("turnover_points", []) or []
+        if tp:
+            ax.plot([p[0] for p in tp], [p[1] for p in tp],
+                    "o", mfc="none", color="crimson", ms=8, mew=1.6,
+                    label="beyond turnover (A2 infeasible;\n"
+                          "pre-declared saturation - excluded)")
         ax.semilogx(ca_axis, d_axis, "-", color="tab:blue", lw=1.0,
                     alpha=0.85)
         alo, ahi = anchor["ca_trusted_range"]
