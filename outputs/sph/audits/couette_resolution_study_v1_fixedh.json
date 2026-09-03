@@ -1,0 +1,174 @@
+{
+  "solver_state": "post CSF-symmetric-stencil fix + lattice-row profile binning (2026-09-02)",
+  "protocol": "exact-row domains; t = 3 viscous times tau; U_wall = 2; as-delivered dissipators (alpha=0.1, xsph=0.1); mu_solvent = 0.5 config; slip = linear extrapolation of the bulk fit to both no-slip planes",
+  "configs": {
+    "s_0.5000_rows_19": {
+      "n_steps": 5700,
+      "dt": 0.008,
+      "t_sim": 45.6,
+      "nu_used": 0.05,
+      "tau_mode": 151.9817754635067,
+      "t_over_tau": 0.3000359737931164,
+      "r2_fit": 0.9907834692765558,
+      "r2_analytic": 0.9713532062096434,
+      "slope_fit": 0.393538033182504,
+      "gamma_expected": 0.46188021535170054,
+      "slope_ratio": 0.8520348352285297,
+      "r2_central": 0.9997874024109191,
+      "slope_central": 0.3545417380624174,
+      "slope_ratio_central": 0.7676053796598544,
+      "y_mid_dev": -0.10825211289541148,
+      "u_wall_fluid": -1.704070088621775,
+      "u_top_fluid": 1.7040692522923444,
+      "slip_frac": 0.8520350443108875,
+      "n_bins": 17,
+      "n_particles": 912,
+      "slope_bin_spread": 0.0001411362406202321,
+      "binning_info": {
+        "15": {
+          "n_bins_requested": 15,
+          "n_empty": 0,
+          "min_bin_count": 48,
+          "n_particles": 912
+        },
+        "25": {
+          "n_bins_requested": 25,
+          "n_empty": 8,
+          "min_bin_count": 48,
+          "n_particles": 912
+        },
+        "40": {
+          "n_bins_requested": 40,
+          "n_empty": 22,
+          "min_bin_count": 1,
+          "n_particles": 912
+        }
+      },
+      "u_wall": 2.0,
+      "H_wall": 8.660254037844386,
+      "central_zone": 2.0,
+      "n_wall_layers": 4,
+      "note": "steady-state linear-profile validation; no-slip planes are the innermost frozen wall rows (lattice continuation, H_wall = inner_top - inner_bottom); the central-region fit excludes the ~2h wall momentum- transmission layers and is the bulk shear rate; y-profile binned over the data range with mass-weighted bin coordinates (fit verified invariant to bin count: slope_bin_spread); slip = linear extrapolation of the bulk fit to the no-slip planes",
+      "spacing": 0.5,
+      "n_rows": 19,
+      "tau": 15.198177546350664,
+      "cfl_dt_ratio": 0.08,
+      "viscous_dt_ratio": 0.032
+    },
+    "s_0.3333_rows_29": {
+      "n_steps": 5700,
+      "dt": 0.008,
+      "t_sim": 45.6,
+      "nu_used": 0.05,
+      "tau_mode": 151.9817754635068,
+      "t_over_tau": 0.3000359737931162,
+      "r2_fit": 0.9407978468061057,
+      "r2_analytic": 0.9036533838182567,
+      "slope_fit": 0.34819342406642867,
+      "gamma_expected": 0.4618802153517004,
+      "slope_ratio": 0.7538608766805382,
+      "r2_central": 0.9998387322005111,
+      "slope_central": 0.2476432603378639,
+      "slope_ratio_central": 0.5361633863214839,
+      "y_mid_dev": -0.07216915322314232,
+      "u_wall_fluid": -1.5077216246776863,
+      "u_top_fluid": 1.5077218820444669,
+      "slip_frac": 0.7538608123388432,
+      "n_bins": 21,
+      "n_particles": 2088,
+      "slope_bin_spread": 0.013048603988954355,
+      "binning_info": {
+        "15": {
+          "n_bins_requested": 15,
+          "n_empty": 2,
+          "min_bin_count": 144,
+          "n_particles": 2088
+        },
+        "25": {
+          "n_bins_requested": 25,
+          "n_empty": 4,
+          "min_bin_count": 72,
+          "n_particles": 2088
+        },
+        "40": {
+          "n_bins_requested": 40,
+          "n_empty": 16,
+          "min_bin_count": 28,
+          "n_particles": 2088
+        }
+      },
+      "u_wall": 2.0,
+      "H_wall": 8.660254037844386,
+      "central_zone": 2.0,
+      "n_wall_layers": 4,
+      "note": "steady-state linear-profile validation; no-slip planes are the innermost frozen wall rows (lattice continuation, H_wall = inner_top - inner_bottom); the central-region fit excludes the ~2h wall momentum- transmission layers and is the bulk shear rate; y-profile binned over the data range with mass-weighted bin coordinates (fit verified invariant to bin count: slope_bin_spread); slip = linear extrapolation of the bulk fit to the no-slip planes",
+      "spacing": 0.3333333333333333,
+      "n_rows": 29,
+      "tau": 15.198177546350664,
+      "cfl_dt_ratio": 0.12000000000000001,
+      "viscous_dt_ratio": 0.07200000000000001
+    },
+    "s_0.2500_rows_39": {
+      "n_steps": 5700,
+      "dt": 0.008,
+      "t_sim": 45.6,
+      "nu_used": 0.05,
+      "tau_mode": 151.98177546350658,
+      "t_over_tau": 0.30003597379311664,
+      "r2_fit": 0.9586867563792584,
+      "r2_analytic": 0.9369396265742757,
+      "slope_fit": 0.37610722018170567,
+      "gamma_expected": 0.46188021535170076,
+      "slope_ratio": 0.8142960180602608,
+      "r2_central": 0.9993153358644046,
+      "slope_central": 0.2907795019967418,
+      "slope_ratio_central": 0.6295560890724156,
+      "y_mid_dev": -0.05414317110053446,
+      "u_wall_fluid": -1.6285857989975838,
+      "u_top_fluid": 1.628598273243459,
+      "slip_frac": 0.8142928994987919,
+      "n_bins": 21,
+      "n_particles": 3744,
+      "slope_bin_spread": 0.013678763077442535,
+      "binning_info": {
+        "15": {
+          "n_bins_requested": 15,
+          "n_empty": 0,
+          "min_bin_count": 96,
+          "n_particles": 3744
+        },
+        "25": {
+          "n_bins_requested": 25,
+          "n_empty": 4,
+          "min_bin_count": 96,
+          "n_particles": 3744
+        },
+        "40": {
+          "n_bins_requested": 40,
+          "n_empty": 10,
+          "min_bin_count": 37,
+          "n_particles": 3744
+        }
+      },
+      "u_wall": 2.0,
+      "H_wall": 8.660254037844386,
+      "central_zone": 2.0,
+      "n_wall_layers": 4,
+      "note": "steady-state linear-profile validation; no-slip planes are the innermost frozen wall rows (lattice continuation, H_wall = inner_top - inner_bottom); the central-region fit excludes the ~2h wall momentum- transmission layers and is the bulk shear rate; y-profile binned over the data range with mass-weighted bin coordinates (fit verified invariant to bin count: slope_bin_spread); slip = linear extrapolation of the bulk fit to the no-slip planes",
+      "spacing": 0.25,
+      "n_rows": 39,
+      "tau": 15.198177546350664,
+      "cfl_dt_ratio": 0.16,
+      "viscous_dt_ratio": 0.128
+    }
+  },
+  "attribution": {
+    "monotone_decreasing_with_refinement": false,
+    "slip_vs_h_fit": {
+      "slope_per_h": 0.10677549052304021,
+      "intercept": 0.7296139533384232,
+      "slip_at_h_zero": 0.7296139533384232
+    },
+    "decision_rule": "(a) monotone decrease with refinement => boundary-discretization artifact, documented; measured-local-shear-rate protocol stands. (b) resolution-independent => wall-formulation property; band NOT relaxed; formulation-level response required."
+  }
+}

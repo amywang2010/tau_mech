@@ -1,27 +1,52 @@
-"""Couette wall-slip resolution study (2026-09-02).
+"""Couette wall-slip resolution study, v2 (2026-09-03).
 
-Context: after the CSF symmetric-stencil fix, the steady Couette profile is
-linear (R2_central ~ 0.998) but the bulk slope is ~14% below the nominal
-expectation for the as-delivered config, quantitatively consistent with wall
-slip (slope_ratio 0.807 -> slip_frac 0.193 in the old metric; the dissipation
-diagnostic showed the dissipative stabilizers account for only part of it and
-the residual tracks the slip fraction 1 - slip = 0.857 vs slope_ratio 0.884).
+WHY v2 (honest protocol history)
+--------------------------------
+v1 (2026-09-02, archived as couette_resolution_study_v1_fixedh.json)
+varied the lattice spacing while keeping the kernel radius at its default
+h = 1.0 for all three levels. Its own pre-registered decision rule, however,
+defines refinement as "h = 2*spacing -> 0 at fixed physical geometry" - i.e.
+kernel and spacing must be refined TOGETHER. With h frozen, the ~2h-thick
+wall momentum-transmission layer was identical in ABSOLUTE units across all
+three v1 runs; the three runs sampled the same physical boundary layer at
+different particle densities. v1 therefore could not decide attribution
+branch (a) vs (b): its slip values (0.852, 0.754, 0.814) are sampling noise
+around ~0.80, not a convergence trend, and its non-monotone scatter is
+exactly what that design predicts. v1 is RETAINED as a fixed-h control (it
+demonstrates the measured slip is not an artifact of particle density at
+fixed kernel) and its coarse level doubles as v2's regression anchor.
 
-Open question (pre-registered decision rule):
-  (a) if slip_frac decreases with resolution (h = 2*spacing -> 0 at fixed
-      physical geometry), the slip is a BOUNDARY-DISCRETIZATION artifact of
-      the frozen-lattice wall; it is documented as such, and the study
-      protocol's use of the MEASURED local shear rate stands;
-  (b) if slip_frac is resolution-independent, the slip is a wall-coupling
-      FORMULATION property and must be addressed at the formulation level -
-      the acceptance band is NOT relaxed either way.
+v2 design (the study the pre-registration specifies)
+----------------------------------------------------
+* Co-refinement: h = 2*spacing at every level (h/dx = 2, the standard SPH
+  convergence design). All h-denominated model parameters (wall layers,
+  central zone, repulsion/attraction cutoffs, switch width) are defined in
+  units of h in the solver, so the physical configuration is IDENTICAL
+  across levels; only the discretization varies.
+* Geometry: same exact-row domains as v1 (fluid rows 19/29/39 at spacings
+  0.5 / 1/3 / 0.25; no-slip planes one row outside the fluid).
+* Quasi-steady guard (replaces v1's ambiguous viscous-time bookkeeping):
+  each level runs a 5700-step window (t = 45.6, the length at which all
+  three v1 levels MEASURED quasi-steady profiles, r2_central >= 0.9993),
+  then an independent 8550-step (1.5x) run. Steadiness criterion:
+  |slip(8550) - slip(5700)| <= 0.005 and r2_central >= 0.99 on both. On
+  failure the window escalates 1.5x (max 2 escalations, cap 12825 steps);
+  persistent failure aborts the level with an explicit record (no silent
+  junk). Momentum-diffusion times at the nominal nu = 0.05 are REPORTED
+  per level for transparency, not used to pick the window.
+* Regression anchor: the level-1 first window (spacing 0.5, h = 1.0,
+  5700 steps) is bit-identical to v1's coarse run (same solver state, same
+  IC, deterministic integrator). slip_frac must reproduce v1's 0.8520350
+  to ~1e-9; any mismatch is solver nondeterminism and fails the study.
+* Decision rule (unchanged from v1, now decisive):
+  (a) slip_frac decreases monotonically with refinement (fit over the
+      three levels) => boundary-discretization artifact: documented, the
+      sweep protocol's use of the MEASURED local shear rate stands;
+  (b) slip_frac resolution-independent => wall-coupling FORMULATION
+      property; the acceptance band is NOT relaxed either way.
 
-Design: three resolutions with EXACT lattice-row domains (the H=8 domain is
-not an integer row multiple of dy = spacing*sqrt(3)/2; exact-row domains
-remove the resulting top/bottom wall-gap asymmetry). Same physical channel
-(N_rows fluid rows), same run length t = 3 viscous times tau (slowest mode
-residual e^-3 ~ 5%, and profile linearity R2 is monitored as the transient
-guard), same U_wall. Only the discretization varies.
+Cost: 3 levels x 8550 steps serial ~= 5 h on this machine (v1 measured
+~0.7 s/step average); escalations add up to ~3.5 h worst case.
 
 Run:  python scripts/diag_couette_resolution.py [--smoke]
 """
@@ -29,6 +54,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -39,7 +65,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from tau_mech.sph import SPHParams, validate_couette  # noqa: E402
 
 OUT = Path("outputs/sph/audits/couette_resolution_study.json")
+V1_BACKUP = Path("outputs/sph/audits/couette_resolution_study_v1_fixedh.json")
 SPACING_ROWS = {0.5: 19, 1.0 / 3.0: 29, 0.25: 39}  # exact fluid rows per level
+BASE_STEPS = 5700          # t = 45.6: all v1 levels measured steady here
+STEADY_TOL = 0.005         # max |slip(1.5T) - slip(T)| accepted as steady
+R2_MIN = 0.99              # linearity floor on every window
+MAX_ESCALATIONS = 2        # window escalation cap (12825 steps)
+V1_COARSE_SLIP = 0.8520350443108875  # regression anchor (v1 record, spacing 0.5)
 
 
 def domain_for(spacing: float, n_rows: int):
@@ -56,36 +88,125 @@ def domain_for(spacing: float, n_rows: int):
     return (0.0, 0.0, 24.0, float(y1))
 
 
-def main() -> None:
-    smoke = "--smoke" in sys.argv
-    params = SPHParams()  # as-delivered: alpha_art=0.1, xsph=0.1, mu=0.05/0.5
-    mu = 0.5  # study-droplet viscosity config (nu_0.5_H8 protocol)
-    rows = {}
-    for spacing, n_rows in sorted(SPACING_ROWS.items(), reverse=True):
-        domain = domain_for(spacing, n_rows)
-        H_wall = (n_rows + 1) * spacing * np.sqrt(3.0) / 2.0
-        tau = H_wall**2 / ((mu / 1.0) * np.pi**2)
-        dt = 0.008
-        cfl = dt * params.c_s / (2.0 * spacing)  # sound-speed margin
-        n_steps = 300 if smoke else int(np.ceil(3.0 * tau / dt))
-        r = validate_couette(params=params, n_steps=n_steps, dt=dt,
-                             domain=domain, spacing=spacing)
-        r.update({"spacing": spacing, "n_rows": n_rows, "H_wall": H_wall,
-                  "tau": tau, "cfl_dt_ratio": cfl,
-                  "viscous_dt_ratio": dt / (0.125 * (2 * spacing) ** 2 / mu)})
-        rows[f"s_{spacing:.4f}_rows_{n_rows}"] = r
-        print(f"s={spacing:.4f} rows={n_rows}: slip_frac={r['slip_frac']:.4f} "
-              f"u_wall_fluid={r['u_wall_fluid']:.4f} u_top={r['u_top_fluid']:.4f} "
-              f"slope_ratio_central={r['slope_ratio_central']:.4f} "
-              f"R2c={r['r2_central']:.4f} y_mid_dev={r['y_mid_dev']:.4f} "
-              f"CFL={cfl:.3f} [{n_steps} steps]")
+def run_level(spacing: float, n_rows: int, smoke: bool):
+    """One resolution level: h = 2*spacing, guarded quasi-steady windows."""
+    h = 2.0 * spacing
+    params = SPHParams(h=h)  # every other parameter: as-delivered defaults;
+    # all h-denominated parameters (r_rep, r_att, switch_delta, wall layers,
+    # central zone) scale with h inside the solver, so the PHYSICAL config
+    # is identical across levels - only the discretization varies.
+    domain = domain_for(spacing, n_rows)
+    H_wall = (n_rows + 1) * spacing * np.sqrt(3.0) / 2.0
+    dt = 0.008
+    nu = params.mu_solvent / 1.0  # rho0 = 1; nominal kinematic viscosity
+    tau_nom = H_wall**2 / (nu * np.pi**2)  # reported, NOT used to size runs
+    cfl = dt * params.c_s / h
+    visc_ratio = dt * nu / (0.125 * h**2)  # viscous stability margin
 
     if smoke:
-        print("SMOKE OK (no record written)")
+        n_steps = 120
+        r = validate_couette(params=params, n_steps=n_steps, dt=dt,
+                             domain=domain, spacing=spacing)
+        r.update({"h": h, "spacing": spacing, "n_rows": n_rows,
+                  "H_wall": H_wall, "n_steps": n_steps})
+        return r, {"n_steps": n_steps, "steady": None, "escalations": 0}
+
+    windows, escalations, steady = [], 0, False
+    n_steps = BASE_STEPS
+    results = {}
+    while True:
+        r = validate_couette(params=params, n_steps=n_steps, dt=dt,
+                             domain=domain, spacing=spacing)
+        results[n_steps] = r
+        windows.append(n_steps)
+        if len(results) >= 2:
+            a, b = results[windows[-2]], results[windows[-1]]
+            drift = abs(b["slip_frac"] - a["slip_frac"])
+            ok = (drift <= STEADY_TOL
+                  and a["r2_central"] >= R2_MIN and b["r2_central"] >= R2_MIN)
+            if ok:
+                steady = True
+                break
+            if escalations >= MAX_ESCALATIONS:
+                break
+            escalations += 1
+            n_steps = int(np.ceil(n_steps * 1.5))
+        else:
+            n_steps = int(np.ceil(n_steps * 1.5))
+
+    final = results[windows[-1]]
+    guard = {
+        "windows": windows,
+        "steady": steady,
+        "escalations": escalations,
+        "slip_drift_last": (abs(results[windows[-1]]["slip_frac"]
+                                - results[windows[-2]]["slip_frac"])
+                            if len(windows) >= 2 else None),
+        "r2_central_all": {str(k): results[k]["r2_central"]
+                           for k in windows},
+        "note": ("quasi-steady guard: two consecutive windows with "
+                 "|dslip| <= 0.005 and r2_central >= 0.99; the headline row "
+                 "is the FINAL window"),
+    }
+    final.update({"h": h, "spacing": spacing, "n_rows": n_rows,
+                  "H_wall": H_wall, "tau_nu_nominal": tau_nom,
+                  "t_over_tau_nu_nominal": final["t_sim"] / tau_nom,
+                  "cfl_dt_ratio": cfl, "viscous_dt_ratio": visc_ratio,
+                  "n_steps": final["n_steps"]})
+    return final, guard
+
+
+def main() -> None:
+    smoke = "--smoke" in sys.argv
+
+    # Archive the v1 (fixed-h) record exactly once, before v2 overwrites it.
+    if OUT.exists() and not V1_BACKUP.exists():
+        shutil.copy2(OUT, V1_BACKUP)
+        print(f"v1 (fixed-h) record archived -> {V1_BACKUP}")
+
+    rows = {}
+    guards = {}
+    for spacing, n_rows in sorted(SPACING_ROWS.items(), reverse=True):
+        r, guard = run_level(spacing, n_rows, smoke)
+        key = f"s_{spacing:.4f}_h_{2.0 * spacing:.4f}_rows_{n_rows}"
+        rows[key] = r
+        guards[key] = guard
+        print(f"s={spacing:.4f} h={2.0 * spacing:.3f} rows={n_rows}: "
+              f"slip_frac={r['slip_frac']:.4f} "
+              f"u_wall_fluid={r['u_wall_fluid']:.4f} "
+              f"slope_ratio_central={r['slope_ratio_central']:.4f} "
+              f"R2c={r['r2_central']:.4f} steady={guard['steady']} "
+              f"[{r['n_steps']} steps]")
+        if smoke:
+            print("SMOKE OK (no record written)")
+            return
+
+    # Regression anchor: level 1 (spacing 0.5, h=1.0, 5700 steps) must
+    # reproduce the v1 coarse run bit-for-bit (deterministic solver).
+    l1 = rows[f"s_0.5000_h_1.0000_rows_19"]
+    anchor = {
+        "v1_slip": V1_COARSE_SLIP,
+        "v2_slip": l1["slip_frac"],
+        "abs_diff": abs(l1["slip_frac"] - V1_COARSE_SLIP),
+        "pass": bool(abs(l1["slip_frac"] - V1_COARSE_SLIP) < 1e-9),
+        "note": ("level-1 first-window replication of the v1 coarse run "
+                 "(same state/IC/deterministic integrator); failure would "
+                 "indicate solver nondeterminism and invalidate the study"),
+    }
+    if not anchor["pass"]:
+        print("REGRESSION ANCHOR FAILED - solver nondeterminism; "
+              "study aborted, no attribution written.")
+        record = {
+            "solver_state": "v2 co-refined (h = 2*spacing); same solver as v1",
+            "regression_anchor": anchor,
+            "attribution": None,
+            "aborted": "regression anchor failed",
+        }
+        OUT.write_text(json.dumps(record, indent=2))
         return
 
     # Pre-registered attribution analysis: slip vs h = 2*spacing.
-    h = np.array([2.0 * r["spacing"] for r in rows.values()])
+    h = np.array([r["h"] for r in rows.values()])
     slip = np.array([r["slip_frac"] for r in rows.values()])
     order = np.argsort(-h)  # coarse -> fine
     monotone = bool(np.all(np.diff(slip[order]) < 0))
@@ -107,17 +228,33 @@ def main() -> None:
                           "relaxed; formulation-level response required."),
     }
     record = {
+        "study_version": "v2 (2026-09-03): kernel co-refined with spacing "
+                         "(h = 2*spacing), per the pre-registered decision "
+                         "rule; v1 retained as fixed-h control",
+        "v1_record": str(V1_BACKUP),
+        "v1_control_interpretation": (
+            "v1 held h = 1.0 fixed while varying spacing; its scatter "
+            "(0.852/0.754/0.814) shows the measured slip is not a particle-"
+            "density artifact at fixed kernel, but it could not test h-"
+            "convergence. v2 tests h-convergence directly."),
         "solver_state": "post CSF-symmetric-stencil fix + lattice-row profile "
                         "binning (2026-09-02)",
-        "protocol": ("exact-row domains; t = 3 viscous times tau; U_wall = 2; "
-                     "as-delivered dissipators (alpha=0.1, xsph=0.1); "
-                     "mu_solvent = 0.5 config; slip = linear extrapolation of "
-                     "the bulk fit to both no-slip planes"),
+        "protocol": ("exact-row domains; h = 2*spacing at every level; "
+                     "quasi-steady guard (two consecutive windows, "
+                     "|dslip| <= 0.005, r2c >= 0.99, base window t = 45.6 "
+                     "= the length at which all v1 levels measured steady); "
+                     "U_wall = 2; as-delivered dissipators (alpha=0.1, "
+                     "xsph=0.1); mu_solvent = 0.05 (as-delivered nominal); "
+                     "slip = linear extrapolation of the bulk fit to both "
+                     "no-slip planes"),
+        "regression_anchor": anchor,
         "configs": rows,
+        "steady_guards": guards,
         "attribution": attribution,
     }
     OUT.write_text(json.dumps(record, indent=2))
     print(f"saved -> {OUT}")
+    print("REGRESSION ANCHOR:", json.dumps(anchor, indent=1))
     print("ATTRIBUTION:", json.dumps(attribution, indent=1))
 
 
