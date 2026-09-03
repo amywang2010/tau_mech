@@ -125,12 +125,15 @@ def main() -> None:
         if plateau is None:
             continue
         below = is_below_floor(r)
-        ax.errorbar(ca, plateau, yerr=None if below else 0.02 * plateau,
-                    marker="o" if not below else "v", ms=7,
-                    mfc="C0" if not below else "none", mec="C0",
-                    capsize=3, ls="none",
-                    label=(f"rate {r['shear_rate_nominal']:g}"
-                           + (" (< LOD)" if below else "")))
+        # No invented error bars: no measurement-uncertainty record exists
+        # for D_inf in the sweep; real variability is shown by the traces
+        # in panel (b) and the control envelope.
+        ax.plot(ca, plateau,
+                marker="o" if not below else "v", ms=7,
+                mfc="C0" if not below else "none", mec="C0",
+                ls="none",
+                label=(f"rate {r['shear_rate_nominal']:g}"
+                       + (" (< LOD)" if below else "")))
         if below:
             ax.annotate("", xy=(ca, plateau * 0.55), xytext=(ca, plateau),
                         arrowprops=dict(arrowstyle="->", color="C0", lw=0.9))
