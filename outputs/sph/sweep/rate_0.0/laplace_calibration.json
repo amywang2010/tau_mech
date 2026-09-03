@@ -1,0 +1,62 @@
+{
+  "model": "CSF (Brackbill 1992 / Adami 2010); A_surf mixed-only immiscibility repulsion; B_surf unused",
+  "sigma_input": 1.0,
+  "A_surf": 10.0,
+  "B_surf": 0.0,
+  "mu_droplet": 0.5,
+  "n_eq": 4500,
+  "sample_from": "physics-based: max(0.6*n_eq, 4*t_char/dt) with t_char = mu*R/sigma",
+  "radii": [
+    5.0,
+    6.0,
+    7.0
+  ],
+  "core_mask": "r < R - 2.5h (c~=1 interior)",
+  "annulus_mask": "r in [R+2.5h, R+4h], y-band clear of walls (c~=0)",
+  "per_radius": {
+    "5.0": {
+      "dP": 0.21813831199919323,
+      "pin": 0.1804506674456914,
+      "pout": -0.03768764455350183,
+      "n_samples": 45,
+      "n_core": 56,
+      "n_far": 226,
+      "nan": 0,
+      "rho_min": 0.9982826358421234,
+      "rho_max": 1.0019551728743332
+    },
+    "6.0": {
+      "dP": 0.1768300007702236,
+      "pin": 0.14044750248486984,
+      "pout": -0.03638249828535377,
+      "n_samples": 45,
+      "n_core": 127,
+      "n_far": 263,
+      "nan": 0,
+      "rho_min": 0.9982865093982859,
+      "rho_max": 1.0017923356335188
+    },
+    "7.0": {
+      "dP": 0.14865218773611888,
+      "pin": 0.11275409237310563,
+      "pout": -0.03589809536301326,
+      "n_samples": 45,
+      "n_core": 231,
+      "n_far": 296,
+      "nan": 0,
+      "rho_min": 0.9983117906968317,
+      "rho_max": 1.001775804399566
+    }
+  },
+  "sigma_fit": 1.2174997905290972,
+  "linearity_dP_vs_1R": 0.9999188479970876,
+  "sigma_eff_per_radius": {
+    "5.0": 1.0906915599959661,
+    "6.0": 1.0609800046213416,
+    "7.0": 1.0405653141528322
+  },
+  "sigma_eff": 1.0640789595900466,
+  "sigma_ratio_fit_over_input": 1.2174997905290972,
+  "usable": true,
+  "note": "2D dimensionless; CSF sigma is a DIRECT model parameter - the Laplace law dP = sigma/R is a VERIFICATION: the slope of dP vs 1/R should equal sigma_input. sigma_eff ~ 0.95-0.99 sigma_input after the velocity-Verlet factor-2 fix (2026-08-14); residual few-% is finite h/R. Use sigma_eff (mean of per-radius dP*R) for the sweep's Ca. dP = P_core - P_annulus averaged after 4x t_char; same measurement as sph.validate_laplace."
+}
