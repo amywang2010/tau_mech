@@ -55,11 +55,33 @@ def main() -> None:
     log("watcher armed; waiting for resolution study v2 to finish")
     t0 = time.time()
     marker = REC.stat().st_mtime if REC.exists() else 0.0
+    restarts = 0
     while True:
         if REC.exists() and REC.stat().st_mtime > marker \
                 and not study_running():
             log("record rewritten and study process gone -> complete")
             break
+        if not study_running() and REC.stat().st_mtime <= marker:
+            # Study died WITHOUT writing a record (crash / OOM / power).
+            # One documented restart; if it dies again, leave everything
+            # for morning review (repeated blind restarts are not
+            # scientific behavior).
+            if restarts < 1:
+                restarts += 1
+                log("study process gone WITHOUT a new record - "
+                    "documented restart attempt 1/1")
+                r = subprocess.Popen(
+                    [str(ROOT / ".venv/Scripts/python.exe"), "-u",
+                     "scripts/diag_couette_resolution.py"],
+                    cwd=ROOT,
+                    stdout=open(ROOT / "outputs/sph/logs/"
+                                "resolution_v2_retry.log", "w"),
+                    stderr=subprocess.STDOUT)
+                log(f"restarted as PID {r.pid}")
+            else:
+                log("study gone again without a record - NOT restarting "
+                    "twice; leaving state for manual review")
+                return
         if time.time() - t0 > TIMEOUT_S:
             log("TIMEOUT after 16 h - exiting without action; record "
                 "will be handled manually")
