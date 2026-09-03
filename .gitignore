@@ -22,3 +22,6 @@ Thumbs.db
 *.zip
 *.7z
 *.rar
+
+# plot_final_sweep sandbox intermediates
+outputs/sph/sweep/_merged_for_plot.*
