@@ -30,10 +30,11 @@ v2 design (the study the pre-registration specifies)
   three v1 levels MEASURED quasi-steady profiles, r2_central >= 0.9993),
   then an independent 8550-step (1.5x) run. Steadiness criterion:
   |slip(8550) - slip(5700)| <= 0.005 and r2_central >= 0.99 on both. On
-  failure the window escalates 1.5x (max 2 escalations, cap 12825 steps);
-  persistent failure aborts the level with an explicit record (no silent
-  junk). Momentum-diffusion times at the nominal nu = 0.05 are REPORTED
-  per level for transparency, not used to pick the window.
+  failure the window escalates once (12825 steps); if steadiness still
+  fails, the level - and the study - ABORT with an explicit record. An
+  unsteady slip value must never enter the pre-registered attribution.
+  Momentum-diffusion times at the nominal nu = 0.05 are REPORTED per
+  level for transparency, not used to pick the window.
 * Regression anchor: the level-1 first window (spacing 0.5, h = 1.0,
   5700 steps) is bit-identical to v1's coarse run (same solver state, same
   IC, deterministic integrator). slip_frac must reproduce v1's 0.8520350
@@ -45,8 +46,8 @@ v2 design (the study the pre-registration specifies)
   (b) slip_frac resolution-independent => wall-coupling FORMULATION
       property; the acceptance band is NOT relaxed either way.
 
-Cost: 3 levels x 8550 steps serial ~= 5 h on this machine (v1 measured
-~0.7 s/step average); escalations add up to ~3.5 h worst case.
+Cost: 3 levels x 8550 steps serial ~= 5 h nominal on this machine (v1
+measured ~0.7 s/step); one escalation on every level ~ 8 h worst case.
 
 Run:  python scripts/diag_couette_resolution.py [--smoke]
 """
@@ -70,7 +71,7 @@ SPACING_ROWS = {0.5: 19, 1.0 / 3.0: 29, 0.25: 39}  # exact fluid rows per level
 BASE_STEPS = 5700          # t = 45.6: all v1 levels measured steady here
 STEADY_TOL = 0.005         # max |slip(1.5T) - slip(T)| accepted as steady
 R2_MIN = 0.99              # linearity floor on every window
-MAX_ESCALATIONS = 2        # window escalation cap (12825 steps)
+MAX_ESCALATIONS = 1        # window escalation cap (12825 steps, then abort)
 V1_COARSE_SLIP = 0.8520350443108875  # regression anchor (v1 record, spacing 0.5)
 
 
@@ -139,6 +140,7 @@ def run_level(spacing: float, n_rows: int, smoke: bool):
         "windows": windows,
         "steady": steady,
         "escalations": escalations,
+        "first_window_slip": results[windows[0]]["slip_frac"],
         "slip_drift_last": (abs(results[windows[-1]]["slip_frac"]
                                 - results[windows[-2]]["slip_frac"])
                             if len(windows) >= 2 else None),
@@ -156,6 +158,27 @@ def run_level(spacing: float, n_rows: int, smoke: bool):
     return final, guard
 
 
+def level1_anchor(guard: dict) -> dict:
+    """Regression anchor: level 1 FIRST window (spacing 0.5, h=1.0, 5700
+    steps) must reproduce the v1 coarse run bit-for-bit (deterministic
+    solver). The FIRST window is the anchor - not the final one - because
+    v1's 0.8520 was measured at exactly t = 45.6; later (longer) windows
+    may legitimately drift by up to the steady tolerance. Checked
+    immediately after level 1 so a determinism failure cannot waste the
+    remaining compute budget.
+    """
+    return {
+        "v1_slip": V1_COARSE_SLIP,
+        "v2_slip": guard["first_window_slip"],
+        "abs_diff": abs(guard["first_window_slip"] - V1_COARSE_SLIP),
+        "pass": bool(abs(guard["first_window_slip"] - V1_COARSE_SLIP) < 1e-9),
+        "note": ("level-1 FIRST-window (5700-step) replication of the v1 "
+                 "coarse run (same state/IC/deterministic integrator); "
+                 "failure would indicate solver nondeterminism and "
+                 "invalidate the study"),
+    }
+
+
 def main() -> None:
     smoke = "--smoke" in sys.argv
 
@@ -166,6 +189,7 @@ def main() -> None:
 
     rows = {}
     guards = {}
+    anchor = None
     for spacing, n_rows in sorted(SPACING_ROWS.items(), reverse=True):
         r, guard = run_level(spacing, n_rows, smoke)
         key = f"s_{spacing:.4f}_h_{2.0 * spacing:.4f}_rows_{n_rows}"
@@ -180,30 +204,40 @@ def main() -> None:
         if smoke:
             print("SMOKE OK (no record written)")
             return
+        if not guard["steady"]:
+            # An unsteady measurement must never enter the attribution:
+            # abort the study with an explicit, attributable record.
+            print("QUASI-STEADY GUARD FAILED - study aborted; no "
+                  "attribution written (unsteady slip must not inform "
+                  "the decision rule).")
+            OUT.write_text(json.dumps({
+                "study_version": "v2 (2026-09-03)",
+                "level": key,
+                "steady_guards": guards,
+                "configs": {key: r},
+                "attribution": None,
+                "aborted": f"quasi-steady guard failed at level {key}",
+            }, indent=2))
+            return
+        if spacing == 0.5:
+            # Early determinism gate: abort BEFORE levels 2-3 if the
+            # anchor fails (saves ~4 h of doomed compute).
+            anchor = level1_anchor(guard)
+            print("REGRESSION ANCHOR:", json.dumps(anchor, indent=1))
+            if not anchor["pass"]:
+                print("REGRESSION ANCHOR FAILED - solver nondeterminism; "
+                      "study aborted, no attribution written.")
+                OUT.write_text(json.dumps({
+                    "study_version": "v2 (2026-09-03)",
+                    "regression_anchor": anchor,
+                    "attribution": None,
+                    "aborted": "regression anchor failed at level 1",
+                }, indent=2))
+                return
 
-    # Regression anchor: level 1 (spacing 0.5, h=1.0, 5700 steps) must
-    # reproduce the v1 coarse run bit-for-bit (deterministic solver).
-    l1 = rows[f"s_0.5000_h_1.0000_rows_19"]
-    anchor = {
-        "v1_slip": V1_COARSE_SLIP,
-        "v2_slip": l1["slip_frac"],
-        "abs_diff": abs(l1["slip_frac"] - V1_COARSE_SLIP),
-        "pass": bool(abs(l1["slip_frac"] - V1_COARSE_SLIP) < 1e-9),
-        "note": ("level-1 first-window replication of the v1 coarse run "
-                 "(same state/IC/deterministic integrator); failure would "
-                 "indicate solver nondeterminism and invalidate the study"),
-    }
-    if not anchor["pass"]:
-        print("REGRESSION ANCHOR FAILED - solver nondeterminism; "
-              "study aborted, no attribution written.")
-        record = {
-            "solver_state": "v2 co-refined (h = 2*spacing); same solver as v1",
-            "regression_anchor": anchor,
-            "attribution": None,
-            "aborted": "regression anchor failed",
-        }
-        OUT.write_text(json.dumps(record, indent=2))
-        return
+    # Regression anchor (already checked early after level 1; recorded in
+    # the final record for the permanent evidence chain).
+    anchor = anchor or level1_anchor(guards["s_0.5000_h_1.0000_rows_19"])
 
     # Pre-registered attribution analysis: slip vs h = 2*spacing.
     h = np.array([r["h"] for r in rows.values()])
