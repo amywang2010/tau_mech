@@ -55,6 +55,11 @@ def main() -> None:
     cou = load("outputs/sph/couette_revalidation.json", P)
     diss = load("outputs/sph/audits/couette_dissipation_diagnostic.json", P)
     reso = load("outputs/sph/audits/couette_resolution_study.json", P)
+    # Version detection: the v2 record carries "study_version"; the v1
+    # (fixed-h) record does not. Until v2 completes, the canonical path
+    # holds v1 - which must be rendered as the fixed-h CONTROL it is,
+    # never under the v2 label.
+    reso_is_v2 = isinstance(reso, dict) and "study_version" in reso
     sweep = load("outputs/sph/sph_shear_sweep.json", P)
     summary = load("outputs/sph/sph_shear_sweep_summary.json", P)
     coup = load("outputs/coupling/coupling_sph_apr.json", P)
@@ -133,18 +138,48 @@ def main() -> None:
       f"{1.0 - d_no['slip_frac']:.3f} ~ recovered slope ratio) "
       f"**[machine]** — derived from the raw configs in the record.")
     if "__PENDING__" in reso:
-        A("6. Wall-slip resolution study: **PENDING** (driver runs it "
-          "after the sweep) — decision rule: monotone slip decrease with "
-          "refinement => boundary-discretization artifact, documented; "
-          "resolution-independent => formulation-level response required "
-          "**[rule]**.")
+        A("6. Wall-slip resolution study: **PENDING** — decision rule: "
+          "monotone slip decrease with refinement => boundary-"
+          "discretization artifact, documented; resolution-independent => "
+          "formulation-level response required **[rule]**.")
+    elif not reso_is_v2:
+        att = reso.get("attribution", {})
+        A(f"6. Wall-slip resolution study: **v1 (fixed-h control) in "
+          f"canonical path; v2 co-refined study in flight**. v1 held "
+          f"h=1.0 fixed while varying spacing, so it could NOT decide "
+          f"attribution (its registered rule requires h=2*dx -> 0): its "
+          f"slip values (0.852/0.754/0.814, monotone-decrease flag = "
+          f"{att.get('monotone_decreasing_with_refinement')}) are a "
+          f"particle-density control at fixed kernel, retained as such. "
+          f"The decisive v2 record replaces this item on completion "
+          f"**[machine/ref]**.")
+    elif reso.get("attribution") is None:
+        A(f"6. Wall-slip resolution study (v2): **ABORTED** — "
+          f"{reso.get('aborted', 'unstated reason')}. No attribution "
+          f"written; the pre-registered rule forbids using unsteady or "
+          f"non-replicating measurements. See the record for the guard "
+          f"evidence **[machine]**.")
     else:
         att = reso.get("attribution", {})
-        A(f"6. Wall-slip resolution study: monotone decrease with "
-          f"refinement = {att.get('monotone_decreasing_with_refinement')}; "
+        anch = reso.get("regression_anchor", {})
+        A(f"6. Wall-slip resolution study (v2, h = 2*dx co-refined): "
+          f"determinism anchor vs v1 coarse run: "
+          f"{'PASS' if anch.get('pass') else 'FAIL'} "
+          f"(|d| {anch.get('abs_diff', 0):.2e}); monotone decrease with "
+          f"refinement = "
+          f"{att.get('monotone_decreasing_with_refinement')}; "
           f"slip(h->0) extrapolation = "
           f"{fmt((att.get('slip_vs_h_fit') or {}).get('slip_at_h_zero', 0) or 0)} "
           f"**[machine]**.")
+        A("   *v1→v2 protocol history:* v1 (archived as "
+          "`couette_resolution_study_v1_fixedh.json`) held the kernel h=1.0 "
+          "fixed while varying spacing — its own registered rule defines "
+          "refinement as h=2*dx -> 0, so v1 could not decide attribution "
+          "(a) vs (b); its scatter (0.852/0.754/0.814) is retained as a "
+          "fixed-h CONTROL showing slip is not a particle-density artifact "
+          "at fixed kernel. v2 tests h-convergence directly, with a "
+          "bit-reproduction determinism anchor and a quasi-steady guard "
+          "(unsteady levels abort; they never enter the rule) **[ref]**.")
     A("")
 
     # ---- 2. shear sweep ----------------------------------------------------
@@ -313,9 +348,12 @@ def main() -> None:
       "carried in the record.")
     A("2. The Laplace calibration carries a documented discretization "
       "uncertainty (sigma_eff = 106.4% of input, converging as h/R -> 0).")
-    A("3. The wall-slip magnitude is resolution-dependent (resolution study "
-      "quantifies it); the sweep protocol uses the *measured* local shear "
-      "rate, so deformation magnitudes do not depend on the nominal rate.")
+    A("3. Wall slip at the frozen-lattice walls attenuates the applied "
+      "shear; its attribution (boundary-discretization vs formulation "
+      "property) is decided by the co-refined resolution study v2 (v1 "
+      "retained as fixed-h control). The sweep protocol uses the "
+      "*measured* local shear rate, so deformation magnitudes do not "
+      "depend on the nominal rate regardless of the attribution.")
     A("4. Mutation analysis is static-packing (mutate-and-recompute SASA on "
       "fixed conformers); conformational-redistribution effects require MD "
       "follow-up and are flagged as such.")
