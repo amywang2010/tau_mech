@@ -39,6 +39,29 @@ def git(*args: str) -> str:
                           cwd=ROOT).stdout.strip()
 
 
+def introducing_commit(search: str, path: str) -> tuple[str, str]:
+    """(hash, commit-date) of the commit that INTRODUCED `search` in `path`.
+
+    `git log --reverse -S` lists oldest first, so the first line is the
+    commit that added the string - the pre-registration commit itself.
+    Plain `git log -S` also lists every later commit that REWORDED the
+    string, which mislabeled the chain (v1.4's hash rendered as v1.2).
+    """
+    out = git("log", "--reverse", "-S", search, "--format=%h %ci",
+              "--", path)
+    first = out.splitlines()[0].strip() if out else ""
+    h, _, dt = first.partition(" ")
+    return h, dt.strip()
+
+
+def verified_commit(short: str) -> tuple[str, str]:
+    """(hash, commit-date) with an assert that the hash resolves."""
+    out = git("log", "-1", "--format=%h %ci", short)
+    assert out, f"BUILD FAILED: pinned commit {short} not in history"
+    h, _, dt = out.partition(" ")
+    return h, dt.strip()
+
+
 def fmt(x, nd=4) -> str:
     return f"{x:.{nd}f}" if isinstance(x, (int, float)) else str(x)
 
@@ -80,17 +103,21 @@ def main() -> None:
     A("")
     A(f"- Code state at generation: commit `{git('rev-parse', '--short', 'HEAD')}`"
       f" ({git('log', '-1', '--format=%ci')})")
-    ammend = git("log", "-S", "below_noise_floor", "--format=%h %ci", "--",
-                 "scripts/merge_final_sweep.py")
-    if ammend:
-        h, _, dt = ammend.partition(" ")
-        ammend13 = git("log", "-S", "pointwise", "--format=%h %ci", "--",
-                       "scripts/merge_final_sweep.py")
-        h13, _, dt13 = (ammend13.partition(" ") if ammend13 else ("", "", ""))
-        A(f"- Acceptance-rule pre-registration chain: v1.2 censoring `{h}` "
-          f"({dt.strip()}); v1.3 pointwise-A1b/one-sided-A3 `{h13}` "
-          f"({dt13.strip()}) — all committed *before* wave-2/3 data existed "
-          "**[rule]**")
+    h12, d12 = introducing_commit("below_noise_floor",
+                                  "scripts/merge_final_sweep.py")
+    h13, d13 = introducing_commit("pointwise",
+                                  "scripts/merge_final_sweep.py")
+    h14, d14 = introducing_commit("A5_extension_prefix_consistency",
+                                  "scripts/merge_final_sweep.py")
+    h141, d141 = verified_commit("0cb94e7")   # v1.4.1 merge hardening
+    A(f"- Acceptance-rule pre-registration chain (each hash = the commit "
+      f"that INTRODUCED the rule, derived and verified at build time): "
+      f"v1.2 below-noise-floor censoring `{h12}` ({d12}); "
+      f"v1.3 pointwise-A1b/one-sided-A3 `{h13}` ({d13}); "
+      f"v1.4 window-trust rule + extension protocol + A5 `{h14}` ({d14}); "
+      f"v1.4.1 supersession-completeness hardening `{h141}` ({d141}) — "
+      f"v1.2/v1.3 committed before wave-2/3 data existed; v1.4/v1.4.1 "
+      f"committed before the extension data existed **[rule]**")
     A("")
 
     # ---- 1. solver validation --------------------------------------------
