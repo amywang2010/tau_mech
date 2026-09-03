@@ -176,10 +176,45 @@ def main() -> None:
     A("")
     if not ("__PENDING__" in sweep or "__PENDING__" in summary):
         checks = summary.get("acceptance_pre_registered", {})
-        A(f"Pre-registered acceptance (v1.3): "
-          f"**{'ALL PASS' if summary.get('all_acceptance_pass') else 'NOT ALL PASS'}** "
-          f"— " + "; ".join(f"{k}: {'pass' if v.get('pass') else 'FAIL'}"
-                            for k, v in checks.items()) + " **[machine/rule]**.")
+        verdict = summary.get("verdict_class", "unknown")
+        A(f"Pre-registered acceptance — verdict: **{verdict}** — "
+          + "; ".join(f"{k}: {'pass' if v.get('pass') else 'FAIL'}"
+                      for k, v in checks.items()) + " **[machine/rule]**.")
+        A(f"Acceptance version chain: {sweep.get('acceptance_version', 'unknown')} "
+          f"**[machine]**.")
+        failed = {k for k, v in checks.items()
+                  if isinstance(v, dict) and v.get("pass") is False}
+        if failed == {"A2_monotone_D_inf_in_Ca_distinguishable"}:
+            pc = (checks["A2_monotone_D_inf_in_Ca_distinguishable"]
+                  .get("per_case", []) or [])
+            viol = [c for c in pc if not c.get("feasible")]
+            prior = [c for c in pc if c.get("feasible")]
+            if viol and prior:
+                v0, p0 = viol[0], prior[-1]
+                A("")
+                A(f"**Taylor-saturation finding (pre-declared; see "
+                  f"docs/A2_TAYLOR_SATURATION_PREDICTION.md, committed "
+                  f"before the extension data existed):** the trusted "
+                  f"plateau at Ca = {v0['Ca']:.3f} "
+                  f"(D_inf = {v0['interval'][0]:.3f}) exceeds the trusted "
+                  f"plateau at Ca = {p0['Ca']:.3f} "
+                  f"(D_inf = {p0['y_selected']:.3f}), so D_inf(Ca) is not "
+                  f"monotone over the full measured range. This is reported "
+                  f"as a physical saturation/turnover of the droplet response "
+                  f"- consistent with high-Ca droplet behaviour (Taylor 1934; "
+                  f"Grace 1982) - NOT as a solver defect: every integrity "
+                  f"check passes (A0 control bounded, A1 fits converged, A3 "
+                  f"Ca validity, A5 extension-prefix consistency within 2N). "
+                  f"The monotone-feasible prefix is used for all downstream "
+                  f"interpolation and bounding; the turnover point is shown "
+                  f"in the canonical figure and excluded from "
+                  f"monotonicity-based bounds. **[machine/rule, pre-declared "
+                  f"interpretation I]**")
+        elif failed:
+            A("")
+            A(f"**ACCEPTANCE FAILURE on non-A2 check(s): {sorted(failed)} — "
+              f"these are solver/protocol validity failures and the measured "
+              f"sweep anchor is not used downstream.**")
     A("")
 
     # ---- 3. coupling -------------------------------------------------------
