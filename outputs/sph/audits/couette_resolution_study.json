@@ -1,5 +1,5 @@
 {
-  "study_version": "v2 (2026-09-03)",
+  "study_version": "v2.1 (2026-09-04)",
   "level": "s_0.5000_h_1.0000_rows_19",
   "steady_guards": {
     "s_0.5000_h_1.0000_rows_19": {
@@ -9,74 +9,22 @@
         12825
       ],
       "steady": false,
-      "escalations": 1,
-      "first_window_slip": 0.8520350443108875,
-      "slip_drift_last": 0.03357615421164328,
+      "first_window_slip": 0.8650209967091259,
+      "slip_drift_last": 0.014428384445139164,
       "r2_central_all": {
-        "5700": 0.9997874024109191,
-        "8550": 0.9995739056641662,
-        "12825": 0.9997876591979598
+        "5700": 0.9998079111607273,
+        "8550": 0.9996105316454436,
+        "12825": 0.9998557113156455
       },
-      "note": "quasi-steady guard: two consecutive windows with |dslip| <= 0.005 and r2_central >= 0.99; the headline row is the FINAL window"
+      "note": "quasi-steady guard: two consecutive windows with |dslip| <= 0.005 and r2_central >= 0.99; the headline row is the FINAL window. v2.1: windows are independent runs from the ANALYTIC steady IC (fixed-point test).",
+      "escalations": 1
     }
   },
-  "configs": {
-    "s_0.5000_h_1.0000_rows_19": {
-      "n_steps": 12825,
-      "dt": 0.008,
-      "t_sim": 102.60000000000001,
-      "nu_used": 0.05,
-      "tau_mode": 151.9817754635067,
-      "t_over_tau": 0.675080941034512,
-      "r2_fit": 0.998981543575886,
-      "r2_analytic": 0.9916316901292911,
-      "slope_fit": 0.42184895648335274,
-      "gamma_expected": 0.46188021535170054,
-      "slope_ratio": 0.9133297821863493,
-      "r2_central": 0.9997876591979598,
-      "slope_central": 0.3997771730372003,
-      "slope_ratio_central": 0.865542969258357,
-      "y_mid_dev": -0.09636507535891026,
-      "u_wall_fluid": -1.8316745470004197,
-      "u_top_fluid": 1.8216445817449776,
-      "slip_frac": 0.9158372735002098,
-      "n_bins": 24,
-      "n_particles": 912,
-      "slope_bin_spread": 0.0012151977889205412,
-      "binning_info": {
-        "15": {
-          "n_bins_requested": 15,
-          "n_empty": 0,
-          "min_bin_count": 23,
-          "n_particles": 912
-        },
-        "25": {
-          "n_bins_requested": 25,
-          "n_empty": 1,
-          "min_bin_count": 1,
-          "n_particles": 912
-        },
-        "40": {
-          "n_bins_requested": 40,
-          "n_empty": 6,
-          "min_bin_count": 2,
-          "n_particles": 912
-        }
-      },
-      "u_wall": 2.0,
-      "H_wall": 8.660254037844386,
-      "central_zone": 2.0,
-      "n_wall_layers": 4,
-      "note": "steady-state linear-profile validation; no-slip planes are the innermost frozen wall rows (lattice continuation, H_wall = inner_top - inner_bottom); the central-region fit excludes the ~2h wall momentum- transmission layers and is the bulk shear rate; y-profile binned over the data range with mass-weighted bin coordinates (fit verified invariant to bin count: slope_bin_spread); slip = linear extrapolation of the bulk fit to the no-slip planes",
-      "h": 1.0,
-      "spacing": 0.5,
-      "n_rows": 19,
-      "tau_nu_nominal": 151.98177546350664,
-      "t_over_tau_nu_nominal": 0.6750809410345123,
-      "cfl_dt_ratio": 0.08,
-      "viscous_dt_ratio": 0.0032
-    }
-  },
+  "reused_fragments": [
+    "level1_rest_w5700.json",
+    "level1_w5700.json",
+    "level1_w8550.json"
+  ],
   "attribution": null,
   "aborted": "quasi-steady guard failed at level s_0.5000_h_1.0000_rows_19"
 }
