@@ -224,16 +224,19 @@ def main() -> None:
         # v2.1 fragments carry the two positive results of the fixed-point
         # design (machine-derived here so the finding is in the report).
         if vern == "v2.1":
-            fa = P / "outputs/sph/audits/res_v21_fragments/level1_w5700.json"
-            fr = P / "outputs/sph/audits/res_v21_fragments/level1_rest_w5700.json"
+            fa = ROOT / "outputs/sph/audits/res_v21_fragments/level1_w5700.json"
+            fr = ROOT / "outputs/sph/audits/res_v21_fragments/level1_rest_w5700.json"
             if fa.exists() and fr.exists():
                 ra = json.loads(fa.read_text())
                 rr = json.loads(fr.read_text())
                 creep = []
+                r2s = []
                 for tag in ("level1_w5700", "level1_w8550", "level1_w12825"):
-                    fp = P / f"outputs/sph/audits/res_v21_fragments/{tag}.json"
+                    fp = ROOT / f"outputs/sph/audits/res_v21_fragments/{tag}.json"
                     if fp.exists():
-                        creep.append(json.loads(fp.read_text())["slip_frac"])
+                        rd = json.loads(fp.read_text())
+                        creep.append(rd["slip_frac"])
+                        r2s.append(rd["r2_central"])
                 A(f"   * v2.1 positive results (from the committed window "
                   f"fragments): (i) INITIAL-CONDITION INDEPENDENCE — rest-IC "
                   f"vs analytic steady-IC at identical config and t = 3*tau "
@@ -242,7 +245,7 @@ def main() -> None:
                   f"the v1/v2 start-up transient as small; (ii) the slip "
                   f"metric still creeps ({' -> '.join(f'{s:.3f}' for s in creep)}) "
                   f"with the profile linear throughout (r2_central >= "
-                  f"{min(json.loads((P / f'outputs/sph/audits/res_v21_fragments/{t}.json').read_text())['r2_central'] for t in ('level1_w5700','level1_w8550','level1_w12825')):.4f}), "
+                  f"{min(r2s):.4f}), "
                   f"so the wall-coupling layer carries a SLOW "
                   f"FORMULATION-LEVEL MODE — classified by the "
                   f"pre-registered falsifiability rule and characterized in "
