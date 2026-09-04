@@ -1,0 +1,9 @@
+sigma_surf=1.0  A_surf=10.0 (mixed-only)  B_surf=0.0  mu_droplet=0.5
+  R=5.0: dP=0.2181 (pin=0.180 pout=-0.038) nan=0 rho[0.998,1.002] [1960s]
+  R=6.0: dP=0.1768 (pin=0.140 pout=-0.036) nan=0 rho[0.998,1.002] [2077s]
+  R=7.0: dP=0.1487 (pin=0.113 pout=-0.036) nan=0 rho[0.998,1.002] [2159s]
+  -> sigma fit=1.2175  linearity(dP vs 1/R)=0.9999
+  -> per-radius sigma_eff (dP*R): R=5.0:1.091, R=6.0:1.061, R=7.0:1.041
+  -> recommended sigma_eff (mean) = 1.0641 (106.4% of sigma_input; residual finite-h/R discretization)
+  DIAG: USABLE (sigma measurable, Laplace scaling OK)
+  saved -> outputs/sph/laplace_calibration.json

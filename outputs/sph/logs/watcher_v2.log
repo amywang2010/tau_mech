@@ -1,0 +1,12 @@
+[2026-09-03 18:43:28] watcher armed; waiting for resolution study v2 to finish
+[2026-09-03 18:46:02] watcher armed; waiting for resolution study v2 to finish
+[2026-09-03 19:52:27] record rewritten and study process gone -> complete
+[2026-09-03 19:52:27] study ABORTED: 'quasi-steady guard failed at level s_0.5000_h_1.0000_rows_19'; committing the abort record (data preservation)
+[2026-09-03 19:52:28] commit rc=0
+[2026-09-03 19:52:33] push rc=0
+[2026-09-04 08:40:11] watcher armed; waiting for resolution study v2.1 (--level1) to finish
+[2026-09-04 08:50:00] watcher armed; waiting for resolution study v2.1 (--level1) to finish
+[2026-09-04 09:18:12] record rewritten and study process gone -> complete
+[2026-09-04 09:18:12] study ABORTED: 'quasi-steady guard failed at level s_0.5000_h_1.0000_rows_19'; committing the abort record (data preservation)
+[2026-09-04 09:18:13] commit rc=0
+[2026-09-04 09:18:18] push rc=0

@@ -1,0 +1,4 @@
+nu_0.5_H8: R2_fit=0.9980 R2_central=0.9985 slope_ratio_central=0.8072 slip=nan pass=False
+nu_0.05_H4: R2_fit=0.9947 R2_central=nan slope_ratio_central=nan slip=nan pass=False
+saved -> outputs\sph\couette_revalidation.json
+ALL_PASS: False

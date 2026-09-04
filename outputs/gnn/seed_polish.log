@@ -1,0 +1,12 @@
+Loading PED00422 graphs ...
+  split: 700/150/150 graphs
+  GAT       seed=1  test PR-AUC=0.9283 ROC=0.9969 F1=0.8386 (best epoch 95)
+  GAT       seed=2  test PR-AUC=0.9518 ROC=0.9984 F1=0.8771 (best epoch 100)
+  GraphSAGE seed=1  test PR-AUC=0.9997 ROC=1.0000 F1=0.9939 (best epoch 99)
+  GraphSAGE seed=2  test PR-AUC=0.9997 ROC=1.0000 F1=0.9933 (best epoch 100)
+  GCN       seed=3  test PR-AUC=0.9029 ROC=0.9966 F1=0.8374 (best epoch 100)
+  GCN       seed=4  test PR-AUC=0.9020 ROC=0.9966 F1=0.8401 (best epoch 100)
+  [GAT] n=2 seeds=[1, 2] PR-AUC 0.9400 +/- 0.0166
+  [GraphSAGE] n=2 seeds=[1, 2] PR-AUC 0.9997 +/- 0.0000
+  [GCN] n=2 seeds=[3, 4] PR-AUC 0.9025 +/- 0.0006
+saved -> outputs\gnn\seed_polish.json  (523.1 min)

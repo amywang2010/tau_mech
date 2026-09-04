@@ -1,0 +1,56 @@
+{
+  "n_steps": 120,
+  "dt": 0.008,
+  "t_sim": 0.96,
+  "nu_used": 0.5,
+  "tau_mode": 15.198177546350664,
+  "t_over_tau": 0.06316546816697188,
+  "r2_fit": 0.999912233898266,
+  "r2_analytic": 0.9988107879384162,
+  "slope_fit": 0.44651145182975216,
+  "gamma_expected": 0.46188021535170054,
+  "slope_ratio": 0.9667256509130927,
+  "r2_central": 0.9999706048800334,
+  "slope_central": 0.4517337992560945,
+  "slope_ratio_central": 0.9780323647595947,
+  "y_mid_dev": -0.10825317547305291,
+  "u_wall_fluid": -1.9334513018261859,
+  "u_top_fluid": 1.9334513018261852,
+  "slip_frac": 0.9667256509130929,
+  "n_bins": 19,
+  "n_particles": 912,
+  "slope_bin_spread": 0.0008205069597708725,
+  "binning_info": {
+    "15": {
+      "n_bins_requested": 15,
+      "n_empty": 0,
+      "min_bin_count": 48,
+      "n_particles": 912
+    },
+    "25": {
+      "n_bins_requested": 25,
+      "n_empty": 6,
+      "min_bin_count": 48,
+      "n_particles": 912
+    },
+    "40": {
+      "n_bins_requested": 40,
+      "n_empty": 21,
+      "min_bin_count": 48,
+      "n_particles": 912
+    }
+  },
+  "u_wall": 2.0,
+  "H_wall": 8.660254037844386,
+  "central_zone": 2.0,
+  "n_wall_layers": 4,
+  "note": "steady-state linear-profile validation; no-slip planes are the innermost frozen wall rows (lattice continuation, H_wall = inner_top - inner_bottom); the central-region fit excludes the ~2h wall momentum- transmission layers and is the bulk shear rate; y-profile binned over the data range with mass-weighted bin coordinates (fit verified invariant to bin count: slope_bin_spread); slip = linear extrapolation of the bulk fit to the no-slip planes",
+  "h": 1.0,
+  "spacing": 0.5,
+  "n_rows": 19,
+  "init": "analytic",
+  "mu_solvent": 0.5,
+  "cfl_dt_ratio": 0.08,
+  "viscous_dt_ratio": 0.032,
+  "reynolds": 34.64101615137754
+}

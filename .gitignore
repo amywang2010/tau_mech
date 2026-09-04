@@ -25,3 +25,7 @@ Thumbs.db
 
 # plot_final_sweep sandbox intermediates
 outputs/sph/sweep/_merged_for_plot.*
+
+# Machine-local convenience files (not part of the study)
+PED Files.zip
+PED Files.code-workspace

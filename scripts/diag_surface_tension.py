@@ -51,7 +51,7 @@ def measure_dP(params: SPHParams, R: float, n_eq: int = 1600, dt: float = 0.008,
     4*t_char/dt). The earlier hardcoded sample_from=800 polluted the average
     with the early oscillation (dP ~ 0.23 -> 0.026 over the first 16 time
     units at R=7), biasing larger radii low and creating a spurious
-    R-dependence in sigma_eff (audit: PHASES_2_5_REPORT.md).
+    R-dependence in sigma_eff (audit: docs/PHASES_2_5_REPORT.md).
     """
     if sample_from <= 0:
         t_char = params.mu_droplet * R / max(params.sigma_surf, 1e-9)
@@ -91,7 +91,7 @@ def main() -> None:
                          "0.5 gives t_char ~ R units, covered >= 5x by "
                          "n-eq=4500. The earlier 5.0 damped the oscillation "
                          "but trapped the run at ~0.3-0.4x t_char and "
-                         "under-measured dP (audit: PHASES_2_5_REPORT.md)")
+                         "under-measured dP (audit: docs/PHASES_2_5_REPORT.md)")
     ap.add_argument("--n-eq", type=int, default=4500)
     args = ap.parse_args()
 
@@ -101,7 +101,7 @@ def main() -> None:
     rows = []
     # radii 5/6/7: the CSF color-transition band is ~2.5h wide; at R <= 3h
     # the band spans the whole droplet so no c~=1 interior exists and pin is
-    # meaningless (the R=3 radial profile is in PHASES_2_5_REPORT.md)
+    # meaningless (the R=3 radial profile is in docs/PHASES_2_5_REPORT.md)
     for R in (5.0, 6.0, 7.0):
         t0 = time.time()
         r = measure_dP(p, R, n_eq=args.n_eq)

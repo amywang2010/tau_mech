@@ -1,0 +1,13 @@
+s=0.5000 rows=19: slip_frac=0.8520 u_wall_fluid=-1.7041 u_top=1.7041 slope_ratio_central=0.7676 R2c=0.9998 y_mid_dev=-0.1083 CFL=0.080 [5700 steps]
+s=0.3333 rows=29: slip_frac=0.7539 u_wall_fluid=-1.5077 u_top=1.5077 slope_ratio_central=0.5362 R2c=0.9998 y_mid_dev=-0.0722 CFL=0.120 [5700 steps]
+s=0.2500 rows=39: slip_frac=0.8143 u_wall_fluid=-1.6286 u_top=1.6286 slope_ratio_central=0.6296 R2c=0.9993 y_mid_dev=-0.0541 CFL=0.160 [5700 steps]
+saved -> outputs\sph\audits\couette_resolution_study.json
+ATTRIBUTION: {
+ "monotone_decreasing_with_refinement": false,
+ "slip_vs_h_fit": {
+  "slope_per_h": 0.10677549052304021,
+  "intercept": 0.7296139533384232,
+  "slip_at_h_zero": 0.7296139533384232
+ },
+ "decision_rule": "(a) monotone decrease with refinement => boundary-discretization artifact, documented; measured-local-shear-rate protocol stands. (b) resolution-independent => wall-formulation property; band NOT relaxed; formulation-level response required."
+}

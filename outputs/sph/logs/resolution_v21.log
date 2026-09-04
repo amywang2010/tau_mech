@@ -1,0 +1,6 @@
+[reuse] level1_rest_w5700.json: config-matched fragment reused (deterministic solver)
+[reuse] level1_w5700.json: config-matched fragment reused (deterministic solver)
+[reuse] level1_w8550.json: config-matched fragment reused (deterministic solver)
+[recover] level1_w12825.json collected (attempt 1)
+LEVEL-1 GUARD FAILED - aborting before levels 2-3.
+saved abort record -> outputs\sph\audits\couette_resolution_study.json

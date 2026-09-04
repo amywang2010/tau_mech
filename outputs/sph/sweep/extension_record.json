@@ -1,0 +1,38 @@
+{
+  "start": "2026-09-03 09:33:57",
+  "protocol": "v1.4 (commit 4500298, pre-registered before wave-3)",
+  "cap_units": 1200.0,
+  "decisions": {
+    "0.001": {
+      "verdict": "extension infeasible: 3*tau=1305 > cap 1200 - remains window_limited with bounded interval",
+      "tau": 435.0064098370724,
+      "T_ext_units": 1305.0192295112172
+    },
+    "0.003": {
+      "verdict": "trusted (no extension needed)",
+      "tau": 71.08538777150278,
+      "T_window": 224.0
+    },
+    "0.01": {
+      "verdict": "trusted (no extension needed)",
+      "tau": 85.93056372969005,
+      "T_window": 224.0
+    },
+    "0.03": {
+      "verdict": "extension launched",
+      "tau": 115.95163970880095,
+      "T_ext_units": 347.8549191264029,
+      "steps": 43482,
+      "out_dir": "C:\\Users\\Okapi\\Downloads\\PED Files\\tau_mech\\outputs\\sph\\sweep\\ext_0.03",
+      "returncode": 0
+    },
+    "0.1": {
+      "verdict": "trusted (no extension needed)",
+      "tau": 17.88820227139245,
+      "T_window": 224.0
+    }
+  },
+  "merge_rc": 0,
+  "tests_rc": 0,
+  "end": "2026-09-03 14:43:44"
+}

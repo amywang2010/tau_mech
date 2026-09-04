@@ -1,0 +1,4 @@
+  [sph] reused Laplace calibration sigma_eff = 1.0641 (linearity 1.000)
+  [sph] t_flow~271  t_char~28  shear_phase=224 units (28000 steps)
+  [sph] gamma_dot=0.0100 (nominal), Ca_nom=0.282  Ca_meas(final)=0.195  D: 0.010 -> 0.182 (plateau fit 0.199 [converged], a=0.971, tau=85.9, R2=0.996)
+DONE rate=0.01 rows=1

@@ -1,0 +1,4 @@
+s=0.5000 rows=19: slip_frac=0.8380 u_wall_fluid=-1.6760 u_top=1.6760 slope_ratio_central=0.7596 R2c=0.9991 y_mid_dev=-0.1083 CFL=0.080 [300 steps]
+s=0.3333 rows=29: slip_frac=0.8742 u_wall_fluid=-1.7484 u_top=1.7484 slope_ratio_central=0.7730 R2c=0.9985 y_mid_dev=-0.0722 CFL=0.120 [300 steps]
+s=0.2500 rows=39: slip_frac=0.8858 u_wall_fluid=-1.7716 u_top=1.7716 slope_ratio_central=0.7985 R2c=0.9987 y_mid_dev=-0.0541 CFL=0.160 [300 steps]
+SMOKE OK (no record written)

@@ -1,0 +1,59 @@
+{
+  "params": {
+    "h": 1.0,
+    "c_s": 10.0,
+    "gamma": 7.0,
+    "mu_solvent": 1.0,
+    "mu_droplet": 10.0,
+    "A_surf": 10.0,
+    "B_surf": 0.0,
+    "sigma_surf": 1.0,
+    "r_rep": 0.45,
+    "switch_delta": 0.05,
+    "r_att": 1.0,
+    "xsph": 0.1,
+    "eps": 0.01,
+    "rho_floor": 0.5,
+    "p_cap": 0.3,
+    "allow_neg_p": true,
+    "alpha_art": 0.1,
+    "shepard": 1.0,
+    "n_color_smooth": 2
+  },
+  "domain": [
+    0.0,
+    0.0,
+    24.0,
+    16.0
+  ],
+  "spacing": 0.5,
+  "droplet_radius": 3.0,
+  "dt": 0.008,
+  "eq_steps": 4000,
+  "t_char_units": 28.193396485875425,
+  "t_flow_units": 270.7499999999997,
+  "rows": [
+    {
+      "shear_rate_nominal": 0.03,
+      "shear_rate_measured_final": 0.019062944890187318,
+      "U_wall": 0.2468172400785649,
+      "capillary_number_Ca": 0.5374491634774441,
+      "capillary_number_nominal": 0.8458018945762628,
+      "n_shear_steps": 28000,
+      "taylor_initial": 0.009847786116188122,
+      "taylor_final": 0.6401262051725921,
+      "taylor_plateau_fit": 0.7432546325302191,
+      "taylor_coefficient_a": 1.36460691773839,
+      "tau_transient": 115.95163970880095,
+      "fit_r2": 0.9980042629055842,
+      "fit_converged": true,
+      "aspect_ratio_initial": 1.0198914590668051,
+      "aspect_ratio_final": 4.557503849256881,
+      "angle_deg_final": 19.851009638786167,
+      "n_droplet": 133,
+      "sigma_used": 1.0640789595900466,
+      "trace_len": 25
+    }
+  ],
+  "note": "2D dimensionless CPU prototype; Ca uses the MEASURED local shear rate (flow development + wall slip accounted for) and the Laplace-verified sigma_eff. Validated against analytic Couette and Laplace limits (validate_couette / validate_laplace). Production 3D/GPU runs are a follow-up."
+}

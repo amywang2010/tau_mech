@@ -1,0 +1,2 @@
+s=0.5000 h=1.000 rows=19: slip_frac=0.9158 u_wall_fluid=-1.8317 slope_ratio_central=0.8655 R2c=0.9998 steady=False [12825 steps]
+QUASI-STEADY GUARD FAILED - study aborted; no attribution written (unsteady slip must not inform the decision rule).

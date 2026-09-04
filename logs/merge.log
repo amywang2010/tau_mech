@@ -1,0 +1,188 @@
+{
+ "checks": {
+  "A0_control_bounded": {
+   "pass": true,
+   "max_abs_D_minus_D0": 0.009784137588762383,
+   "limit": 0.02
+  },
+  "A1_plateau_quality_distinguishable": {
+   "pass": true,
+   "per_case": {
+    "0.003": {
+     "r2": 0.9599289945174572,
+     "converged": true
+    },
+    "0.01": {
+     "r2": 0.9963255954272701,
+     "converged": true
+    },
+    "0.03": {
+     "r2": 0.9957554584131926,
+     "converged": true
+    },
+    "0.1": {
+     "r2": 0.8597527390641158,
+     "converged": true
+    }
+   },
+   "n_distinguishable": 4,
+   "n_below_noise_floor": 0
+  },
+  "A1d_window_limited_reported_as_interval": {
+   "pass": true,
+   "per_case": {
+    "0.001": {
+     "interval_wellformed_and_rising": true
+    }
+   },
+   "note": "window-limited cases carry D_inf in [last sample, fit asymptote]; conservative upper bounds enter A2"
+  },
+  "A1c_all_sheared_cases_classified": {
+   "pass": true,
+   "unclassified": []
+  },
+  "A2_monotone_D_inf_in_Ca_distinguishable": {
+   "pass": false,
+   "method": "interval feasibility (greedy), v1.4",
+   "per_case": [
+    {
+     "Ca": 0.0215,
+     "class": "window_limited",
+     "interval": [
+      0.0148,
+      0.0148
+     ],
+     "y_selected": 0.0148,
+     "feasible": true
+    },
+    {
+     "Ca": 0.0543,
+     "class": "signal_distinguishable",
+     "interval": [
+      0.0471,
+      0.0471
+     ],
+     "y_selected": 0.0471,
+     "feasible": true
+    },
+    {
+     "Ca": 0.1945,
+     "class": "signal_distinguishable",
+     "interval": [
+      0.1987,
+      0.1987
+     ],
+     "y_selected": 0.1987,
+     "feasible": true
+    },
+    {
+     "Ca": 0.5208,
+     "class": "signal_distinguishable",
+     "interval": [
+      0.8382,
+      0.8382
+     ],
+     "y_selected": 0.8382,
+     "feasible": true
+    },
+    {
+     "Ca": 1.7794,
+     "class": "signal_distinguishable",
+     "interval": [
+      0.6887,
+      0.6887
+     ],
+     "y_selected": 0.8382,
+     "feasible": false
+    }
+   ]
+  },
+  "A5_extension_prefix_consistency": {
+   "pass": true,
+   "per_case": {
+    "0.03": {
+     "max_abs_diff_on_shared_grid": 0.01060186686164117,
+     "limit_2N": 0.019170381477051465,
+     "pass": true
+    }
+   },
+   "note": "extension windows observe the same deterministic trajectory; disagreement beyond 2N is a data-integrity violation"
+  },
+  "A3_Ca_validity_one_sided": {
+   "pass": true,
+   "upper_limit": 1.05,
+   "per_case": {
+    "0.001": 0.7635,
+    "0.003": 0.642,
+    "0.01": 0.6899,
+    "0.03": 0.6158,
+    "0.1": 0.6311
+   }
+  },
+  "A3d_Ca_ratio_diagnostic_flag": {
+   "pass": true,
+   "sub_0p5_cases": {},
+   "note": "sub-0.5 ratios are expected from wall slip at low rates and are attributed by the Couette resolution study; they do not invalidate the sweep because Ca uses the measured local shear rate"
+  }
+ },
+ "notes": {
+  "control_reference": {
+   "D_ctrl_sustained": 0.0002613271525199111,
+   "noise_floor_N": 0.009585190738525732,
+   "rule": "N = max|D_ctrl(t) - mean(last 20% of control trace)|"
+  },
+  "classification": {
+   "0.001": {
+    "class": "window_limited",
+    "signal_S": 0.01452689607794953,
+    "signal_to_noise": 1.5155562861740053,
+    "trusted_fit": false,
+    "tau_fit": 435.0064098370724,
+    "T_window": 224.0,
+    "D_inf_censored_upper": null,
+    "D_inf_interval": [
+     0.01478822323046944,
+     0.01478822323046944
+    ]
+   },
+   "0.003": {
+    "class": "signal_distinguishable",
+    "signal_S": 0.04684243531243829,
+    "signal_to_noise": 4.886959121654681,
+    "trusted_fit": true,
+    "tau_fit": 71.08538777150278,
+    "T_window": 224.0,
+    "D_inf_censored_upper": null
+   },
+   "0.01": {
+    "class": "signal_distinguishable",
+    "signal_S": 0.19845558733959553,
+    "signal_to_noise": 20.70439626641372,
+    "trusted_fit": true,
+    "tau_fit": 85.93056372969005,
+    "T_window": 224.0,
+    "D_inf_censored_upper": null
+   },
+   "0.03": {
+    "class": "signal_distinguishable",
+    "signal_S": 0.8379395130943309,
+    "signal_to_noise": 87.42022312883172,
+    "trusted_fit": true,
+    "tau_fit": 143.3294089665795,
+    "T_window": 347.856,
+    "D_inf_censored_upper": null
+   },
+   "0.1": {
+    "class": "signal_distinguishable",
+    "signal_S": 0.688432928503599,
+    "signal_to_noise": 71.82255912097632,
+    "trusted_fit": true,
+    "tau_fit": 17.88820227139245,
+    "T_window": 224.0,
+    "D_inf_censored_upper": null
+   }
+  }
+ }
+}
+ALL_ACCEPTANCE_PASS: False
+saved -> C:\Users\Okapi\Downloads\PED Files\tau_mech\outputs\sph\sph_shear_sweep.json

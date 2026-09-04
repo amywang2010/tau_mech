@@ -124,7 +124,7 @@ class SPHParams:
     # producing an artifact surface tension (anti-Laplace dP ~ R). The CSF
     # model decouples sigma from the pair forces: sigma is a direct parameter
     # and the Laplace law dP = sigma/R becomes a VERIFICATION, not a
-    # calibration. (Full audit trail in PHASES_2_5_REPORT.md.)
+    # calibration. (Full audit trail in docs/PHASES_2_5_REPORT.md.)
     r_rep: float = 0.45             # repulsion cutoff (units of h): set BELOW
                                     # the lattice spacing (0.5h) so the
                                     # mixed-only immiscibility barrier acts as
@@ -136,7 +136,7 @@ class SPHParams:
                                     # (NN < 0.35 for ~23% of the droplet) and
                                     # suppressing the CSF Laplace signal;
                                     # 0.45h with a steep ramp gives 0%
-                                    # clumping (audit: PHASES_2_5_REPORT.md)
+                                    # clumping (audit: docs/PHASES_2_5_REPORT.md)
     switch_delta: float = 0.05      # smooth-switch half-width (units of h)
                                     # for the repulsion ramp
     r_att: float = 1.0              # attraction cutoff (units of h)
@@ -168,7 +168,7 @@ class SPHParams:
                                     # well-defined; combined with the
                                     # renormalized divergence (Adami 2010) it
                                     # recovers kappa ~ +1/R at the interface
-                                    # (audit trail: PHASES_2_5_REPORT.md).
+                                    # (audit trail: docs/PHASES_2_5_REPORT.md).
 
 
 def hexagonal_pack(x0, y0, x1, y1, spacing) -> np.ndarray:
@@ -250,7 +250,7 @@ def compute_density(state: SPHState, params: SPHParams, pairs, d) -> None:
     #   rho_i = sum_j m_j W_ij / sum_j (m_j/rho_j) W_ij
     # The raw mass-sum has a lattice-scale E0 imprint (hex-lattice shells)
     # which the stiff EOS (gamma=7) amplifies into pressure swings of +/-2.5
-    # that buried the Laplace signal (see PHASES_2_5_REPORT.md, Phase 3
+    # that buried the Laplace signal (see docs/PHASES_2_5_REPORT.md, Phase 3
     # failures: anti-Laplace dP). The correction divides by the same-hold
     # kernel-sum, canceling the imprint. Standard SPH practice (Shepard
     # filter / density renormalization).
@@ -330,7 +330,7 @@ def compute_acceleration(state: SPHState, params: SPHParams, pairs, d, e) -> np.
     # repulsion -> attraction transition across [r_rep-delta, r_rep+delta].
     # The sharp switch at r_rep caused particles to rattle at the force
     # discontinuity (vmax spikes, noisy pressure); a cosine ramp makes the
-    # force continuous (documented in PHASES_2_5_REPORT.md, Phase 3).
+    # force continuous (documented in docs/PHASES_2_5_REPORT.md, Phase 3).
     if params.A_surf > 0 or params.B_surf > 0:
         same = (phase[i] == 1) & (phase[j] == 1)          # droplet-droplet
         mixed = ((phase[i] == 1) & (phase[j] == 0)) | ((phase[i] == 0) & (phase[j] == 1))
@@ -350,7 +350,7 @@ def compute_acceleration(state: SPHState, params: SPHParams, pairs, d, e) -> np.
             # CSF is the surface tension) a same-phase repulsion rarefies the
             # droplet interior (measured dP(0) = -0.54 at sigma=0, droplet
             # rho 0.995 < solvent 1.000), which would corrupt the Laplace
-            # reference pressure (see PHASES_2_5_REPORT.md, CSF audit).
+            # reference pressure (see docs/PHASES_2_5_REPORT.md, CSF audit).
             f[mixed] += (params.A_surf * mj[mixed, None] * we[mixed]
                          * rep_w[mixed, None])
         if params.B_surf > 0:
@@ -481,7 +481,7 @@ def compute_surface_force(state: SPHState, params: SPHParams,
     scripts/diag_csf_sign.py and scripts/diag_csf_field.py: (1) an opposite
     prefactor sign, and (2) a truncated raw-color divergence stencil that
     gave kappa < 0 on the droplet rim and EXPANDED the droplet even with the
-    correct prefactor. Both are documented in PHASES_2_5_REPORT.md.
+    correct prefactor. Both are documented in docs/PHASES_2_5_REPORT.md.
     """
     n = state.n
     acc = np.zeros((n, 2))
@@ -900,14 +900,14 @@ def validate_laplace(params: SPHParams, n_steps: int = 4500, dt: float = 0.008,
     relaxation (t_char ~ 50-60 units) so the runs were trapped at ~0.3-0.4x
     t_char and under-measured dP with an R-dependent bias (measured sigma_eff
     ratio 1.16 across R=5/6 matched the t/t_char ratio 1.2 - documented in
-    PHASES_2_5_REPORT.md). Pressure is averaged over the final half of the
+    docs/PHASES_2_5_REPORT.md). Pressure is averaged over the final half of the
     trajectory (sampled every 50 steps) to cancel residual surface-mode
     oscillation.
 
     Radii 5/6/7 are required for the CSF model: the color-transition band is
     ~2.5-3h wide, and at R <= 3h the band spans the whole droplet so no c~=1
     interior exists (see :func:`_laplace_masks`; the R=2 and R=3 failures
-    are documented in PHASES_2_5_REPORT.md).
+    are documented in docs/PHASES_2_5_REPORT.md).
     """
     p = replace(params, mu_droplet=damp_mu)
     out = {}
@@ -924,7 +924,7 @@ def validate_laplace(params: SPHParams, n_steps: int = 4500, dt: float = 0.008,
         # sample only after the surface-mode oscillation decays; the decay
         # time scales with the capillary time t_char = mu*R/sigma_eff (a
         # fixed 0.5*n_steps polluted the average with the early oscillation
-        # at large R - audit: PHASES_2_5_REPORT.md)
+        # at large R - audit: docs/PHASES_2_5_REPORT.md)
         t_char = p.mu_droplet * R / max(params.sigma_surf, 1e-9)
         sample_from = int(max(0.6 * n_steps, 4.0 * t_char / dt))
         for s in range(n_steps):
@@ -962,7 +962,7 @@ def measure_shear_rate(state: SPHState, params: SPHParams,
     perturbation of the velocity field is excluded. This is the quantity the
     droplet actually experiences; it is measured rather than assumed, so the
     analysis is robust to (a) the Couette flow development transient and
-    (b) finite wall slip (both documented in PHASES_2_5_REPORT.md).
+    (b) finite wall slip (both documented in docs/PHASES_2_5_REPORT.md).
     """
     m = ((state.phase == 0)
          & (np.abs(state.pos[:, 0] - com[0]) > x_margin)
@@ -986,7 +986,7 @@ def droplet_shear_sweep(params: SPHParams, shear_rates: Sequence = None,
     """Droplet-in-shear sweep with MEASURED local shear rate.
 
     Design (rewritten 2026-08-10 after a design audit, see
-    PHASES_2_5_REPORT.md):
+    docs/PHASES_2_5_REPORT.md):
 
     * The Couette flow in a finite cell develops over t_flow = H_wall^2/nu,
       which is far longer than any feasible run at the study viscosity; the

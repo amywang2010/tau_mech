@@ -1,0 +1,5 @@
+as_delivered (alpha=0.1, xsph=0.1): slope_ratio_central=0.8072 R2_central=0.9985 y_mid_dev=-0.1222
+no_artificial_viscosity: slope_ratio_central=0.8048 R2_central=0.9984 y_mid_dev=-0.1222
+no_xsph: slope_ratio_central=0.8681 R2_central=0.9972 y_mid_dev=0.1946
+no_dissipators (Morris only): slope_ratio_central=0.8840 R2_central=0.9944 y_mid_dev=-0.2046
+saved -> outputs\sph\audits\couette_dissipation_diagnostic.json

@@ -124,7 +124,7 @@ def main() -> None:
     A("## 1. SPH solver validation chain")
     A("")
     A("1. CSF operator audit (permutation invariance, azimuthal uniformity, "
-      "resolution convergence): `PHASE3_CSFFIX_AUDIT.md`, "
+      "resolution convergence): `docs/PHASE3_CSFFIX_AUDIT.md`, "
       "`outputs/sph/audits/csf_convergence.json` **[ref]** — asymmetric "
       "stencil found (net internal force 10.8%), fixed, regression-tested "
       "(3 permanent tests).")

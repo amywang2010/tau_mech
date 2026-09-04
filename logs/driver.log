@@ -1,0 +1,21 @@
+[2026-09-02 18:11:54] === wave ['0.0', '0.1'] ===
+[2026-09-02 18:11:54] launched rate 0.0 (pid 24792)
+[2026-09-02 18:11:54] launched rate 0.1 (pid 18904)
+[2026-09-02 20:57:07] rate 0.0 finished rc=0
+[2026-09-02 20:57:07] rate 0.1 finished rc=0
+[2026-09-02 20:57:07] === wave ['0.001', '0.03'] ===
+[2026-09-02 20:57:07] launched rate 0.001 (pid 20244)
+[2026-09-02 20:57:07] launched rate 0.03 (pid 24264)
+[2026-09-02 23:59:33] rate 0.001 finished rc=0
+[2026-09-02 23:59:33] rate 0.03 finished rc=0
+[2026-09-02 23:59:33] === wave ['0.003', '0.01'] ===
+[2026-09-02 23:59:33] launched rate 0.003 (pid 20200)
+[2026-09-02 23:59:33] launched rate 0.01 (pid 25592)
+[2026-09-03 11:12:55] rate 0.003 finished rc=0
+[2026-09-03 11:12:55] rate 0.01 finished rc=0
+[2026-09-03 11:12:55] === Couette resolution study (production) ===
+[2026-09-03 17:47:49] resolution study rc=0
+[2026-09-03 17:47:49] === merge + acceptance ===
+[2026-09-03 17:47:50] merge rc=0
+[2026-09-03 17:47:50] === test suite ===
+[2026-09-03 17:50:09] DRIVER COMPLETE rc=0

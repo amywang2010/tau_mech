@@ -476,7 +476,7 @@ def cross_ensemble_matrix(ensembles: Sequence[str], model_kind: str = "GCN",
     NOTE: the target graphs are converted with the SAME scaler fit on the
     TRAINING ensemble - feeding raw (unscaled) continuous features into a
     model trained on z-scored features silently corrupts the transfer
-    numbers (this was an early bug, see PHASES_2_5_REPORT.md Phase 4).
+    numbers (this was an early bug, see docs/PHASES_2_5_REPORT.md Phase 4).
     """
     cache = {e: load_ensemble_graphs(e, out_dir) for e in ensembles}
     rows = []

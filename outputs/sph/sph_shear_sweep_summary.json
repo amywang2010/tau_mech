@@ -1,0 +1,329 @@
+{
+  "acceptance_pre_registered": {
+    "A0_control_bounded": {
+      "pass": true,
+      "max_abs_D_minus_D0": 0.009784137588762383,
+      "limit": 0.02
+    },
+    "A1_plateau_quality_distinguishable": {
+      "pass": true,
+      "per_case": {
+        "0.003": {
+          "r2": 0.9599289945174572,
+          "converged": true
+        },
+        "0.01": {
+          "r2": 0.9963255954272701,
+          "converged": true
+        },
+        "0.03": {
+          "r2": 0.9957554584131926,
+          "converged": true
+        },
+        "0.1": {
+          "r2": 0.8597527390641158,
+          "converged": true
+        }
+      },
+      "n_distinguishable": 4,
+      "n_below_noise_floor": 0
+    },
+    "A1d_window_limited_reported_as_interval": {
+      "pass": true,
+      "per_case": {
+        "0.001": {
+          "interval_wellformed_and_rising": true
+        }
+      },
+      "note": "window-limited cases carry D_inf in [last sample, fit asymptote]; conservative upper bounds enter A2"
+    },
+    "A1c_all_sheared_cases_classified": {
+      "pass": true,
+      "unclassified": []
+    },
+    "A2_monotone_D_inf_in_Ca_distinguishable": {
+      "pass": false,
+      "method": "interval feasibility (greedy), v1.4",
+      "per_case": [
+        {
+          "Ca": 0.0215,
+          "class": "window_limited",
+          "interval": [
+            0.0148,
+            0.0148
+          ],
+          "y_selected": 0.0148,
+          "feasible": true
+        },
+        {
+          "Ca": 0.0543,
+          "class": "signal_distinguishable",
+          "interval": [
+            0.0471,
+            0.0471
+          ],
+          "y_selected": 0.0471,
+          "feasible": true
+        },
+        {
+          "Ca": 0.1945,
+          "class": "signal_distinguishable",
+          "interval": [
+            0.1987,
+            0.1987
+          ],
+          "y_selected": 0.1987,
+          "feasible": true
+        },
+        {
+          "Ca": 0.5208,
+          "class": "signal_distinguishable",
+          "interval": [
+            0.8382,
+            0.8382
+          ],
+          "y_selected": 0.8382,
+          "feasible": true
+        },
+        {
+          "Ca": 1.7794,
+          "class": "signal_distinguishable",
+          "interval": [
+            0.6887,
+            0.6887
+          ],
+          "y_selected": 0.8382,
+          "feasible": false
+        }
+      ]
+    },
+    "A5_extension_prefix_consistency": {
+      "pass": true,
+      "per_case": {
+        "0.03": {
+          "max_abs_diff_on_shared_grid": 0.01060186686164117,
+          "limit_2N": 0.019170381477051465,
+          "pass": true
+        }
+      },
+      "note": "extension windows observe the same deterministic trajectory; disagreement beyond 2N is a data-integrity violation"
+    },
+    "A3_Ca_validity_one_sided": {
+      "pass": true,
+      "upper_limit": 1.05,
+      "per_case": {
+        "0.001": 0.7635,
+        "0.003": 0.642,
+        "0.01": 0.6899,
+        "0.03": 0.6158,
+        "0.1": 0.6311
+      }
+    },
+    "A3d_Ca_ratio_diagnostic_flag": {
+      "pass": true,
+      "sub_0p5_cases": {},
+      "note": "sub-0.5 ratios are expected from wall slip at low rates and are attributed by the Couette resolution study; they do not invalidate the sweep because Ca uses the measured local shear rate"
+    }
+  },
+  "acceptance_notes": {
+    "control_reference": {
+      "D_ctrl_sustained": 0.0002613271525199111,
+      "noise_floor_N": 0.009585190738525732,
+      "rule": "N = max|D_ctrl(t) - mean(last 20% of control trace)|"
+    },
+    "classification": {
+      "0.001": {
+        "class": "window_limited",
+        "signal_S": 0.01452689607794953,
+        "signal_to_noise": 1.5155562861740053,
+        "trusted_fit": false,
+        "tau_fit": 435.0064098370724,
+        "T_window": 224.0,
+        "D_inf_censored_upper": null,
+        "D_inf_interval": [
+          0.01478822323046944,
+          0.01478822323046944
+        ]
+      },
+      "0.003": {
+        "class": "signal_distinguishable",
+        "signal_S": 0.04684243531243829,
+        "signal_to_noise": 4.886959121654681,
+        "trusted_fit": true,
+        "tau_fit": 71.08538777150278,
+        "T_window": 224.0,
+        "D_inf_censored_upper": null
+      },
+      "0.01": {
+        "class": "signal_distinguishable",
+        "signal_S": 0.19845558733959553,
+        "signal_to_noise": 20.70439626641372,
+        "trusted_fit": true,
+        "tau_fit": 85.93056372969005,
+        "T_window": 224.0,
+        "D_inf_censored_upper": null
+      },
+      "0.03": {
+        "class": "signal_distinguishable",
+        "signal_S": 0.8379395130943309,
+        "signal_to_noise": 87.42022312883172,
+        "trusted_fit": true,
+        "tau_fit": 143.3294089665795,
+        "T_window": 347.856,
+        "D_inf_censored_upper": null
+      },
+      "0.1": {
+        "class": "signal_distinguishable",
+        "signal_S": 0.688432928503599,
+        "signal_to_noise": 71.82255912097632,
+        "trusted_fit": true,
+        "tau_fit": 17.88820227139245,
+        "T_window": 224.0,
+        "D_inf_censored_upper": null
+      }
+    }
+  },
+  "all_acceptance_pass": false,
+  "rows": [
+    {
+      "shear_rate_nominal": 0.0,
+      "shear_rate_measured_final": -4.76254816843477e-17,
+      "U_wall": 0.0,
+      "capillary_number_Ca": -1.342724087957613e-15,
+      "capillary_number_nominal": 0.0,
+      "n_shear_steps": 28000,
+      "taylor_initial": 0.009847786116188122,
+      "taylor_final": 0.0004252502513713908,
+      "taylor_plateau_fit": 0.0004252502513713908,
+      "taylor_coefficient_a": -9422535864.816732,
+      "tau_transient": NaN,
+      "fit_r2": 0.0,
+      "fit_converged": false,
+      "aspect_ratio_initial": 1.0198914590668051,
+      "aspect_ratio_final": 1.0008508623321635,
+      "angle_deg_final": 1.750777300912887e-11,
+      "n_droplet": 133,
+      "sigma_used": 1.0640789595900466,
+      "trace_len": 25
+    },
+    {
+      "shear_rate_nominal": 0.001,
+      "shear_rate_measured_final": 0.000763482481358086,
+      "U_wall": 0.008227241335952163,
+      "capillary_number_Ca": 0.02152516430694851,
+      "capillary_number_nominal": 0.028193396485875426,
+      "n_shear_steps": 28000,
+      "taylor_initial": 0.009847786116188122,
+      "taylor_final": 0.01478822323046944,
+      "taylor_plateau_fit": 0.01478822323046944,
+      "taylor_coefficient_a": 0.22951913601358673,
+      "tau_transient": 435.0064098370724,
+      "fit_r2": 0.7999306840303939,
+      "fit_converged": false,
+      "aspect_ratio_initial": 1.0198914590668051,
+      "aspect_ratio_final": 1.0300203947601183,
+      "angle_deg_final": 50.93003339446616,
+      "n_droplet": 133,
+      "sigma_used": 1.0640789595900466,
+      "trace_len": 25
+    },
+    {
+      "shear_rate_nominal": 0.003,
+      "shear_rate_measured_final": 0.0019261223632203919,
+      "U_wall": 0.024681724007856492,
+      "capillary_number_Ca": 0.054303931466583875,
+      "capillary_number_nominal": 0.08458018945762627,
+      "n_shear_steps": 28000,
+      "taylor_initial": 0.009847786116188122,
+      "taylor_final": 0.04237298872970409,
+      "taylor_plateau_fit": 0.047103762464958204,
+      "taylor_coefficient_a": 0.6860640720220355,
+      "tau_transient": 71.08538777150278,
+      "fit_r2": 0.9599289945174572,
+      "fit_converged": true,
+      "aspect_ratio_initial": 1.0198914590668051,
+      "aspect_ratio_final": 1.0884958093934634,
+      "angle_deg_final": 43.86120958408017,
+      "n_droplet": 133,
+      "sigma_used": 1.0640789595900466,
+      "trace_len": 25
+    },
+    {
+      "shear_rate_nominal": 0.01,
+      "shear_rate_measured_final": 0.0068993574821280225,
+      "U_wall": 0.08227241335952164,
+      "capillary_number_Ca": 0.1945163209914265,
+      "capillary_number_nominal": 0.2819339648587543,
+      "n_shear_steps": 28000,
+      "taylor_initial": 0.009847786116188122,
+      "taylor_final": 0.18151490727107567,
+      "taylor_plateau_fit": 0.19871691449211545,
+      "taylor_coefficient_a": 0.9709680268127833,
+      "tau_transient": 85.93056372969005,
+      "fit_r2": 0.9963255954272701,
+      "fit_converged": true,
+      "aspect_ratio_initial": 1.0198914590668051,
+      "aspect_ratio_final": 1.4435387006643796,
+      "angle_deg_final": 35.57385828053958,
+      "n_droplet": 133,
+      "sigma_used": 1.0640789595900466,
+      "trace_len": 25
+    },
+    {
+      "shear_rate_nominal": 0.03,
+      "shear_rate_measured_final": 0.018472690279881656,
+      "U_wall": 0.2468172400785649,
+      "capillary_number_Ca": 0.5208078812214806,
+      "capillary_number_nominal": 0.8458018945762628,
+      "n_shear_steps": 43482,
+      "taylor_initial": 0.009847786116188122,
+      "taylor_final": 0.7435855059199186,
+      "taylor_plateau_fit": 0.8382008402468508,
+      "taylor_coefficient_a": 1.5905155893337843,
+      "tau_transient": 143.3294089665795,
+      "fit_r2": 0.9957554584131926,
+      "fit_converged": true,
+      "aspect_ratio_initial": 1.0198914590668051,
+      "aspect_ratio_final": 6.799871092214372,
+      "angle_deg_final": 11.879322784292498,
+      "n_droplet": 133,
+      "sigma_used": 1.0640789595900466,
+      "trace_len": 26,
+      "source_window": "extension (supersedes short window)"
+    },
+    {
+      "shear_rate_nominal": 0.1,
+      "shear_rate_measured_final": 0.06311373200758404,
+      "U_wall": 0.8227241335952163,
+      "capillary_number_Ca": 1.7793904701931034,
+      "capillary_number_nominal": 2.8193396485875426,
+      "n_shear_steps": 28000,
+      "taylor_initial": 0.009847786116188122,
+      "taylor_final": 0.6786910135556992,
+      "taylor_plateau_fit": 0.688694255656119,
+      "taylor_coefficient_a": 0.38150506081234714,
+      "tau_transient": 17.88820227139245,
+      "fit_r2": 0.8597527390641158,
+      "fit_converged": true,
+      "aspect_ratio_initial": 1.0198914590668051,
+      "aspect_ratio_final": 5.224538012872233,
+      "angle_deg_final": 0.5431101971886108,
+      "n_droplet": 133,
+      "sigma_used": 1.0640789595900466,
+      "trace_len": 25
+    }
+  ],
+  "verdict_class": "FAIL",
+  "verdict_class_note": "FAIL = at least one pre-registered check failed; PASS_WITH_CENSORED = below-noise-floor case(s) reported as censored bounds; PASS_WITH_LIMITS = window-limited case(s) reported as bounded intervals (extension infeasible under the committed compute cap)",
+  "extension_integrity": {
+    "pass": true,
+    "per_case": {
+      "0.03": {
+        "max_abs_diff_on_shared_grid": 0.01060186686164117,
+        "limit_2N": 0.019170381477051465,
+        "pass": true
+      }
+    },
+    "note": "extension windows observe the same deterministic trajectory; disagreement beyond 2N is a data-integrity violation"
+  }
+}
