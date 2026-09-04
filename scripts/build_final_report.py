@@ -409,6 +409,17 @@ def main() -> None:
     cmp_ = gnn_supp["comparison_pr_auc"]
     A("- Model comparison (test PR-AUC): "
       + ", ".join(f"{k} {v:.3f}" for k, v in cmp_.items()) + " **[machine]**.")
+    # Seed-variance polish (pre-registered rescoped plan, 2026-09-04):
+    # GAT/GraphSAGE n=3, GCN n=5 on the identical stratified seed-0 split.
+    sp = load("outputs/gnn/seed_polish.json", P)
+    sp_agg = sp.get("aggregates_all_seeds", {})
+    A("- Seed robustness (extended seed sets, identical split): "
+      + "; ".join(
+          f"{k} (n={v['n_runs']}) {v['pr_auc_mean']:.3f} +/- "
+          f"{v['pr_auc_sd']:.3f} (SD)"
+          for k, v in sp_agg.items())
+      + " — model-comparison orderings are evaluated against seed "
+        "variance, not single-seed point estimates **[machine]**.")
     A(f"- Baseline/structure separation (the key methodological point): the "
       f"distance-free MLP ({cmp_.get('MLP (no graph)', 0):.3f}) and the "
       f"no-spatial-edge GCN "
