@@ -1,0 +1,208 @@
+{
+  "purpose": "seed-variance polish: GAT/GraphSAGE n=3, GCN n=5 on the identical stratified seed-0 split; model-comparison robustness evidence",
+  "protocol": "epochs=100 patience=20, as-delivered features, identical to train_gnn.py section A",
+  "main_summary_status": "5 reference runs loaded",
+  "new_runs": [
+    {
+      "kind": "GAT",
+      "seed": 1,
+      "best_epoch": 95,
+      "val_pr_auc": 0.9255878007080292,
+      "test": {
+        "pr_auc": 0.9282603803026873,
+        "roc_auc": 0.9968936890270225,
+        "threshold": 0.9859932661056519,
+        "precision": 0.8416340235030778,
+        "recall": 0.8355555555555556,
+        "f1": 0.8385837747416244,
+        "confusion_matrix": [
+          [
+            64067,
+            283
+          ],
+          [
+            296,
+            1504
+          ]
+        ],
+        "n_pos": 1800,
+        "n_neg": 64350
+      }
+    },
+    {
+      "kind": "GAT",
+      "seed": 2,
+      "best_epoch": 100,
+      "val_pr_auc": 0.9468869262535412,
+      "test": {
+        "pr_auc": 0.9517853694487579,
+        "roc_auc": 0.9984125442458776,
+        "threshold": 0.9728837013244629,
+        "precision": 0.8483904465212876,
+        "recall": 0.9077777777777778,
+        "f1": 0.8770799785287544,
+        "confusion_matrix": [
+          [
+            64058,
+            292
+          ],
+          [
+            166,
+            1634
+          ]
+        ],
+        "n_pos": 1800,
+        "n_neg": 64350
+      }
+    },
+    {
+      "kind": "GraphSAGE",
+      "seed": 1,
+      "best_epoch": 99,
+      "val_pr_auc": 0.999788941805441,
+      "test": {
+        "pr_auc": 0.9997088698614272,
+        "roc_auc": 0.9999915479582147,
+        "threshold": 0.870411217212677,
+        "precision": 0.9944382647385984,
+        "recall": 0.9933333333333333,
+        "f1": 0.9938854919394666,
+        "confusion_matrix": [
+          [
+            64340,
+            10
+          ],
+          [
+            12,
+            1788
+          ]
+        ],
+        "n_pos": 1800,
+        "n_neg": 64350
+      }
+    },
+    {
+      "kind": "GraphSAGE",
+      "seed": 2,
+      "best_epoch": 100,
+      "val_pr_auc": 0.9997469873622461,
+      "test": {
+        "pr_auc": 0.9996892622392721,
+        "roc_auc": 0.9999909695243029,
+        "threshold": 0.9123380184173584,
+        "precision": 0.9949832775919732,
+        "recall": 0.9916666666666667,
+        "f1": 0.9933222036722879,
+        "confusion_matrix": [
+          [
+            64341,
+            9
+          ],
+          [
+            15,
+            1785
+          ]
+        ],
+        "n_pos": 1800,
+        "n_neg": 64350
+      }
+    },
+    {
+      "kind": "GCN",
+      "seed": 3,
+      "best_epoch": 100,
+      "val_pr_auc": 0.8898957122924058,
+      "test": {
+        "pr_auc": 0.9029325171492817,
+        "roc_auc": 0.9965842830009497,
+        "threshold": 0.9021480083465576,
+        "precision": 0.766497461928934,
+        "recall": 0.9227777777777778,
+        "f1": 0.8374086211237796,
+        "confusion_matrix": [
+          [
+            63844,
+            506
+          ],
+          [
+            139,
+            1661
+          ]
+        ],
+        "n_pos": 1800,
+        "n_neg": 64350
+      }
+    },
+    {
+      "kind": "GCN",
+      "seed": 4,
+      "best_epoch": 100,
+      "val_pr_auc": 0.8878516023225428,
+      "test": {
+        "pr_auc": 0.9020176517000423,
+        "roc_auc": 0.9966414357247692,
+        "threshold": 0.9307870268821716,
+        "precision": 0.789447972642892,
+        "recall": 0.8977777777777778,
+        "f1": 0.8401351702620443,
+        "confusion_matrix": [
+          [
+            63919,
+            431
+          ],
+          [
+            184,
+            1616
+          ]
+        ],
+        "n_pos": 1800,
+        "n_neg": 64350
+      }
+    }
+  ],
+  "aggregates_all_seeds": {
+    "GAT": {
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "pr_auc_mean": 0.9388838209997794,
+      "pr_auc_sd": 0.01192680216057886,
+      "pr_auc_min": 0.9282603803026873,
+      "pr_auc_max": 0.9517853694487579,
+      "roc_auc_mean": 0.9977444257388702,
+      "n_runs": 3
+    },
+    "GraphSAGE": {
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "pr_auc_mean": 0.99968329664341,
+      "pr_auc_sd": 2.901960194964643e-05,
+      "pr_auc_min": 0.9996517578295311,
+      "pr_auc_max": 0.9997088698614272,
+      "roc_auc_mean": 0.999990834268612,
+      "n_runs": 3
+    },
+    "GCN": {
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "pr_auc_mean": 0.9023154493585143,
+      "pr_auc_sd": 0.0008564999349485589,
+      "pr_auc_min": 0.9009430433814763,
+      "pr_auc_max": 0.902957919677159,
+      "roc_auc_mean": 0.9966239886039887,
+      "n_runs": 5
+    }
+  },
+  "wall_clock_s": 31385.214661598206,
+  "amendment": "2026-09-04: the original run recorded main_summary_status = 'gnn_summary.json not found' - a wrong reference filename in this script, so aggregates covered only the 6 new runs (n=2 per kind). Aggregates rebuilt here through the identical aggregation code with the corrected reference (summary.json); new_runs are untouched; the pre-fix record is preserved as seed_polish_pre_merge_fix.json."
+}

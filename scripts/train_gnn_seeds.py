@@ -40,7 +40,7 @@ from tau_mech.gnn import (  # noqa: E402
 )
 
 OUT_JSON = os.path.join("outputs", "gnn", "seed_polish.json")
-SUMMARY = os.path.join("outputs", "gnn", "gnn_summary.json")
+SUMMARY = os.path.join("outputs", "gnn", "summary.json")  # main-run record (defect fix 2026-09-04: was gnn_summary.json, which does not exist - the reference merge silently no-oped)
 
 torch.set_num_threads(2)
 
@@ -51,7 +51,78 @@ PLAN = {
 }
 
 
+def load_main_reference():
+    """Main-run reference results for the PLAN kinds (or empty + status)."""
+    if not os.path.exists(SUMMARY):
+        return [], "summary.json not found"
+    try:
+        s = json.load(open(SUMMARY))
+        ref = [m for m in s.get("main", [])
+               if m.get("kind") in PLAN and "test" in m]
+        return ref, f"{len(ref)} reference runs loaded"
+    except Exception as e:  # noqa: BLE001 - record, never crash the record
+        return [], f"summary parse failed: {e!r}"
+
+
+def aggregate(runs, main_ref):
+    """Per-kind aggregates over ALL seeds (new runs + main reference)."""
+    agg = {}
+    for kind in PLAN:
+        all_runs = [{"seed": r["seed"], "pr_auc": r["test"]["pr_auc"],
+                     "roc_auc": r["test"]["roc_auc"], "f1": r["test"]["f1"]}
+                    for r in runs if r["kind"] == kind]
+        all_runs += [{"seed": m["seed"], "pr_auc": m["test"]["pr_auc"],
+                      "roc_auc": m["test"]["roc_auc"], "f1": m["test"]["f1"]}
+                     for m in main_ref if m["kind"] == kind]
+        pr = np.array([r["pr_auc"] for r in all_runs])
+        roc = np.array([r["roc_auc"] for r in all_runs])
+        agg[kind] = {
+            "seeds": sorted(r["seed"] for r in all_runs),
+            "pr_auc_mean": float(pr.mean()), "pr_auc_sd": float(pr.std(ddof=1)) if len(pr) > 1 else 0.0,
+            "pr_auc_min": float(pr.min()), "pr_auc_max": float(pr.max()),
+            "roc_auc_mean": float(roc.mean()),
+            "n_runs": len(all_runs),
+        }
+    return agg
+
+
+def reagregate_mode() -> None:
+    """Rebuild aggregates from the existing record through the SAME
+    aggregation code (no re-training; training is deterministic per seed
+    and its raw results are untouched). The defective pre-fix record is
+    preserved as seed_polish_pre_merge_fix.json and the amendment is
+    documented inside the record."""
+    rec = json.load(open(OUT_JSON))
+    backup = OUT_JSON.replace(".json", "_pre_merge_fix.json")
+    if not os.path.exists(backup):
+        with open(backup, "w") as f:
+            json.dump(rec, f, indent=2)
+    main_ref, main_status = load_main_reference()
+    runs = rec["new_runs"]
+    agg = aggregate(runs, main_ref)
+    for kind, a in agg.items():
+        print(f"  [{kind}] n={a['n_runs']} seeds={a['seeds']} "
+              f"PR-AUC {a['pr_auc_mean']:.4f} +/- {a['pr_auc_sd']:.4f}",
+              flush=True)
+    rec["main_summary_status"] = main_status
+    rec["aggregates_all_seeds"] = agg
+    rec["amendment"] = (
+        "2026-09-04: the original run recorded main_summary_status = "
+        "'gnn_summary.json not found' - a wrong reference filename in "
+        "this script, so aggregates covered only the 6 new runs (n=2 "
+        "per kind). Aggregates rebuilt here through the identical "
+        "aggregation code with the corrected reference (summary.json); "
+        "new_runs are untouched; the pre-fix record is preserved as "
+        "seed_polish_pre_merge_fix.json.")
+    with open(OUT_JSON, "w") as f:
+        json.dump(rec, f, indent=2)
+    print(f"reaggregated -> {OUT_JSON}", flush=True)
+
+
 def main() -> None:
+    if "--reaggregate" in sys.argv:
+        reagregate_mode()
+        return
     t0 = time.time()
     if PYG_ERROR is not None:
         print(f"PyG import failed: {PYG_ERROR}")
@@ -74,37 +145,14 @@ def main() -> None:
                          "val_pr_auc": r["best_val"]["pr_auc"],
                          "test": r["test"]})
 
-    # Merge with the main run's seeds for the aggregates.
-    main_ref, main_status = [], "gnn_summary.json not found"
-    if os.path.exists(SUMMARY):
-        try:
-            s = json.load(open(SUMMARY))
-            main_ref = [m for m in s.get("main", [])
-                        if m.get("kind") in PLAN and "test" in m]
-            main_status = f"{len(main_ref)} reference runs loaded"
-        except Exception as e:  # noqa: BLE001 - record, never crash the record
-            main_status = f"summary parse failed: {e!r}"
-
-    agg = {}
-    for kind in PLAN:
-        all_runs = [{"seed": r["seed"], "pr_auc": r["test"]["pr_auc"],
-                     "roc_auc": r["test"]["roc_auc"], "f1": r["test"]["f1"]}
-                    for r in runs if r["kind"] == kind]
-        all_runs += [{"seed": m["seed"], "pr_auc": m["test"]["pr_auc"],
-                      "roc_auc": m["test"]["roc_auc"], "f1": m["test"]["f1"]}
-                     for m in main_ref if m["kind"] == kind]
-        pr = np.array([r["pr_auc"] for r in all_runs])
-        roc = np.array([r["roc_auc"] for r in all_runs])
-        agg[kind] = {
-            "seeds": sorted(r["seed"] for r in all_runs),
-            "pr_auc_mean": float(pr.mean()), "pr_auc_sd": float(pr.std(ddof=1)) if len(pr) > 1 else 0.0,
-            "pr_auc_min": float(pr.min()), "pr_auc_max": float(pr.max()),
-            "roc_auc_mean": float(roc.mean()),
-            "n_runs": len(all_runs),
-        }
-        print(f"  [{kind}] n={len(all_runs)} seeds={agg[kind]['seeds']} "
-              f"PR-AUC {agg[kind]['pr_auc_mean']:.4f} "
-              f"+/- {agg[kind]['pr_auc_sd']:.4f}", flush=True)
+    # Merge with the main run's seeds for the aggregates (shared code path
+    # with --reaggregate: one aggregation implementation, one truth).
+    main_ref, main_status = load_main_reference()
+    agg = aggregate(runs, main_ref)
+    for kind, a in agg.items():
+        print(f"  [{kind}] n={a['n_runs']} seeds={a['seeds']} "
+              f"PR-AUC {a['pr_auc_mean']:.4f} +/- {a['pr_auc_sd']:.4f}",
+              flush=True)
 
     record = {
         "purpose": "seed-variance polish: GAT/GraphSAGE n=3, GCN n=5 on the "
