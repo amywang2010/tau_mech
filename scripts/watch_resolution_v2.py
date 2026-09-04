@@ -52,7 +52,7 @@ def study_running() -> bool:
 
 
 def main() -> None:
-    log("watcher armed; waiting for resolution study v2 to finish")
+    log("watcher armed; waiting for resolution study v2.1 (--level1) to finish")
     t0 = time.time()
     marker = REC.stat().st_mtime if REC.exists() else 0.0
     restarts = 0
@@ -72,10 +72,10 @@ def main() -> None:
                     "documented restart attempt 1/1")
                 r = subprocess.Popen(
                     [str(ROOT / ".venv/Scripts/python.exe"), "-u",
-                     "scripts/diag_couette_resolution.py"],
+                     "scripts/diag_couette_resolution.py", "--level1"],
                     cwd=ROOT,
                     stdout=open(ROOT / "outputs/sph/logs/"
-                                "resolution_v2_retry.log", "w"),
+                                "resolution_v21_retry.log", "w"),
                     stderr=subprocess.STDOUT)
                 log(f"restarted as PID {r.pid}")
             else:

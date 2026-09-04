@@ -161,6 +161,64 @@ def _collect(frag: Path) -> dict:
     return json.loads(frag.read_text())
 
 
+REUSED: list[str] = []
+
+
+def _valid_fragment(frag: Path, spacing: float, n_rows: int,
+                    n_steps: int, init: str) -> bool:
+    """A fragment is reusable iff it matches the requested configuration
+    exactly and carries finite headline metrics. The solver is bit-
+    reproducible (v2 determinism anchor), so a config-matched fragment is
+    identical to a fresh run; every reuse is recorded in the study record."""
+    if not frag.exists():
+        return False
+    try:
+        r = json.loads(frag.read_text())
+    except Exception:
+        return False
+    if not isinstance(r, dict):
+        return False
+    keys_ok = (r.get("spacing") == spacing and r.get("n_rows") == n_rows
+               and r.get("n_steps") == n_steps and r.get("init") == init
+               and r.get("mu_solvent") == NU_DESIGNED
+               and r.get("h") == 2.0 * spacing)
+    metrics_ok = all(np.isfinite(r.get(k, np.nan))
+                     for k in ("slip_frac", "r2_central", "slope_fit"))
+    return bool(keys_ok and metrics_ok)
+
+
+def _spawn_unless_valid(spacing: float, n_rows: int, n_steps: int,
+                        init: str, frag: Path):
+    """Reuse a config-matched fragment (deterministic solver); else spawn."""
+    if _valid_fragment(frag, spacing, n_rows, n_steps, init):
+        REUSED.append(frag.name)
+        print(f"[reuse] {frag.name}: config-matched fragment reused "
+              f"(deterministic solver)", flush=True)
+        return None
+    return _spawn(spacing, n_rows, n_steps, init, frag)
+
+
+def _collect_robust(frag: Path, spacing: float, n_rows: int,
+                    n_steps: int, init: str):
+    """Collect a window result, retrying a dead child exactly once. A child
+    that exits without writing its fragment (observed 2026-09-04 after an
+    overnight standby throttle: empty log, no JSON) is retried once; a
+    second failure returns None so the caller aborts with diagnostics
+    instead of raising FileNotFoundError."""
+    if _valid_fragment(frag, spacing, n_rows, n_steps, init):
+        return json.loads(frag.read_text())
+    for attempt in (1, 2):
+        p = _spawn(spacing, n_rows, n_steps, init, frag)
+        p.wait()
+        if _valid_fragment(frag, spacing, n_rows, n_steps, init):
+            print(f"[recover] {frag.name} collected (attempt {attempt})",
+                  flush=True)
+            return json.loads(frag.read_text())
+        print(f"[warn] {frag.name}: child rc={p.returncode} produced no "
+              f"valid fragment (attempt {attempt})", flush=True)
+    return None
+
+
 def _guard_from(results: dict[int, dict], tag: str) -> tuple[dict | None, dict, bool]:
     """Apply the unchanged v2 guard to >=2 window results (ordered by steps).
 
@@ -195,15 +253,26 @@ def level_guard_async(spacing: float, n_rows: int, tag: str):
     """Schedule a level's windows immediately; returns a zero-arg closure
     that waits and applies the unchanged guard (+1 escalation on demand)."""
     w1 = window_steps(spacing)
+    w2 = int(np.ceil(w1 * 1.5))
     f1 = FRAGDIR / f"{tag}_w{w1}.json"
-    f2 = FRAGDIR / f"{tag}_w{int(np.ceil(w1 * 1.5))}.json"
-    p1 = _spawn(spacing, n_rows, w1, "analytic", f1)
-    p2 = _spawn(spacing, n_rows, int(np.ceil(w1 * 1.5)), "analytic", f2)
+    f2 = FRAGDIR / f"{tag}_w{w2}.json"
+    p1 = _spawn_unless_valid(spacing, n_rows, w1, "analytic", f1)
+    p2 = _spawn_unless_valid(spacing, n_rows, w2, "analytic", f2)
 
     def wait_guard():
-        p1.wait()
-        p2.wait()
-        results = {w1: _collect(f1), int(np.ceil(w1 * 1.5)): _collect(f2)}
+        if p1 is not None:
+            p1.wait()
+        if p2 is not None:
+            p2.wait()
+        r1 = _collect_robust(f1, spacing, n_rows, w1, "analytic")
+        r2 = _collect_robust(f2, spacing, n_rows, w2, "analytic")
+        if r1 is None or r2 is None:
+            guard = {"windows": [], "steady": False,
+                     "spawn_failure": {"fragments": [f1.name, f2.name],
+                                       "note": ("child died twice without "
+                                                "writing; see fragment logs")}}
+            return None, guard, False
+        results = {w1: r1, w2: r2}
         escalations = 0
         while True:
             final, guard, steady = _guard_from(results, tag)
@@ -215,9 +284,16 @@ def level_guard_async(spacing: float, n_rows: int, tag: str):
             escalations += 1
             we = int(np.ceil(w1 * (1.5 ** (1 + escalations))))
             fe = FRAGDIR / f"{tag}_w{we}.json"
-            pe = _spawn(spacing, n_rows, we, "analytic", fe)
-            pe.wait()
-            results[we] = _collect(fe)
+            re_ = _collect_robust(fe, spacing, n_rows, we, "analytic")
+            if re_ is None:
+                guard["escalations"] = escalations
+                guard["spawn_failure"] = {
+                    "window_steps": we,
+                    "log": str(FRAGDIR / f"{fe.stem}.log"),
+                    "note": ("escalation child died twice without writing; "
+                             "aborting with diagnostics, not crashing")}
+                return None, guard, False
+            results[we] = re_
 
     return wait_guard
 
@@ -302,19 +378,25 @@ def main() -> None:
     # ---- phase 1: level-1 guard + rest-IC diagnostic, all in parallel ----
     lvl1_key = "s_0.5000_h_1.0000_rows_19"
     f_rest = FRAGDIR / "level1_rest_w5700.json"
-    p_rest = _spawn(0.5, 19, window_steps(0.5), "rest", f_rest)
+    p_rest = _spawn_unless_valid(0.5, 19, window_steps(0.5), "rest", f_rest)
     wait1 = level_guard_async(0.5, 19, "level1")
     final1, guard1, steady1 = wait1()
-    p_rest.wait()
+    if p_rest is not None:
+        p_rest.wait()
     guard1["escalations"] = guard1.get("escalations", 0)
+    # Define ONCE here: the abort paths below reference these, and phase 2
+    # previously redefined them (a latent NameError on the abort paths).
+    guards = {lvl1_key: guard1}
+    rows = {lvl1_key: final1} if steady1 else {}
     if not steady1:
-        if p_rest.poll() is None:
+        if p_rest is not None and p_rest.poll() is None:
             p_rest.kill()
         print("LEVEL-1 GUARD FAILED - aborting before levels 2-3.", flush=True)
         OUT.write_text(json.dumps({
             "study_version": "v2.1 (2026-09-04)",
             "level": lvl1_key,
-            "steady_guards": {lvl1_key: guard1},
+            "steady_guards": guards,
+            "reused_fragments": list(REUSED),
             "attribution": None,
             "aborted": f"quasi-steady guard failed at level {lvl1_key}",
         }, indent=2))
@@ -329,6 +411,7 @@ def main() -> None:
             "regression_anchor": anchor,
             "steady_guards": guards,
             "configs": rows,
+            "reused_fragments": list(REUSED),
             "attribution": None,
             "aborted": "steady-preservation anchor failed at level 1",
         }, indent=2))
@@ -362,6 +445,7 @@ def main() -> None:
             "regression_anchor": anchor,
             "configs": rows,
             "steady_guards": guards,
+            "reused_fragments": list(REUSED),
             "attribution": None,
             "attribution_status": "not_attempted_rescoped",
             "wall_clock_s": time.time() - t0,
@@ -379,9 +463,7 @@ def main() -> None:
             continue
         tag = f"lvl_rows{n_rows}"
         waits[spacing] = (n_rows, level_guard_async(spacing, n_rows, tag))
-    rows = {lvl1_key: final1}
-    guards = {lvl1_key: guard1}
-    abort_level = None
+    abort_level = None  # rows/guards already defined in phase 1
     for spacing, (n_rows, wait_fn) in waits.items():
         final, guard, steady = wait_fn()
         key = f"s_{spacing:.4f}_h_{2.0 * spacing:.4f}_rows_{n_rows}"
@@ -447,6 +529,7 @@ def main() -> None:
         "regression_anchor": anchor,
         "configs": rows,
         "steady_guards": guards,
+        "reused_fragments": list(REUSED),
         "attribution": attribution,
         "wall_clock_s": time.time() - t0,
     }
