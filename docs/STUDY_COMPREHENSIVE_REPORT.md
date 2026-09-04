@@ -61,12 +61,11 @@ aberrant aggregation into neurofibrillary tangles defines Alzheimer's disease
 and related tauopathies. Aggregation nucleates at two hexapeptide motifs,
 **VQIINK (residues 275–280)** and **VQIVYK (306–311)**. Before fibrils form,
 Tau can undergo **liquid–liquid phase separation (LLPS)** into dynamic
-biomolecular condensates (Ambadipudi et al. 2017; Boyko et al. 2022 review;
-Wen et al. 2021 — conformational expansion inside condensates promotes
-irreversible aggregation). Wild-type Tau condensates form under
-activity-dependent conditions in neurons (Zhang et al. 2020, *Cell*; Longfield
-et al. 2023 — synaptic Tau condensates), positioning LLPS as the probable
-physiological on-ramp to pathology.
+biomolecular condensates (Ambadipudi et al. 2017; Wegmann et al. 2018;
+Boyko et al. 2022 review; Wen et al. 2021 — conformational expansion inside
+condensates promotes irreversible aggregation). Tau condensates also form
+in synaptic contexts under activity-dependent conditions (Longfield et al.
+2023), positioning LLPS as the probable physiological on-ramp to pathology.
 
 ### 2.2 The mechanical environment of the brain
 
@@ -442,13 +441,13 @@ never cited as a result.*)*
 
 1. Ambadipudi, S. et al. (2017). Liquid–liquid phase separation of the
    microtubule-binding repeats of Tau. *Nature Communications*.
-2. Zhang, X. et al. (2020). Neuronal activity-dependent formation of
-   wild-type Tau condensates. *Cell*.
+2. Wegmann, S. et al. (2018). Tau protein liquid–liquid phase separation can
+   initiate tau aggregation. *Nature Communications* 9:712.
 3. Boyko, S., Qi, X., Chen, J., Zhou, H.-X. (2022). Tau liquid–liquid phase
    separation in neurodegenerative disease. *Annu. Rev. Biophys.*
    (PMC9189016).
 4. Wen, J. et al. (2021). Conformational expansion of Tau in condensates
-   promotes irreversible aggregation. *JACS Au* 143:13056.
+   promotes irreversible aggregation. *J. Am. Chem. Soc.* 143(33):13056.
 5. Longfield, S. F. et al. (2023). Tau forms synaptic nano-biomolecular
    condensates. *Nature Communications* 14 (s41467-023-43130-4).
 6. Shen, Y. et al. (2020). Biomolecular condensates undergo a generic
