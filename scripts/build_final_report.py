@@ -221,6 +221,32 @@ def main() -> None:
           f"non-replicating measurements. The shear sweep is insulated "
           f"from this non-stationarity by construction: its Ca values use "
           f"measured local shear rates, not wall-fit slopes **[ref]**.")
+        # v2.1 fragments carry the two positive results of the fixed-point
+        # design (machine-derived here so the finding is in the report).
+        if vern == "v2.1":
+            fa = P / "outputs/sph/audits/res_v21_fragments/level1_w5700.json"
+            fr = P / "outputs/sph/audits/res_v21_fragments/level1_rest_w5700.json"
+            if fa.exists() and fr.exists():
+                ra = json.loads(fa.read_text())
+                rr = json.loads(fr.read_text())
+                creep = []
+                for tag in ("level1_w5700", "level1_w8550", "level1_w12825"):
+                    fp = P / f"outputs/sph/audits/res_v21_fragments/{tag}.json"
+                    if fp.exists():
+                        creep.append(json.loads(fp.read_text())["slip_frac"])
+                A(f"   * v2.1 positive results (from the committed window "
+                  f"fragments): (i) INITIAL-CONDITION INDEPENDENCE — rest-IC "
+                  f"vs analytic steady-IC at identical config and t = 3*tau "
+                  f"agree to |d(slip)| = "
+                  f"{abs(rr['slip_frac'] - ra['slip_frac']):.1e}, quantifying "
+                  f"the v1/v2 start-up transient as small; (ii) the slip "
+                  f"metric still creeps ({' -> '.join(f'{s:.3f}' for s in creep)}) "
+                  f"with the profile linear throughout (r2_central >= "
+                  f"{min(json.loads((P / f'outputs/sph/audits/res_v21_fragments/{t}.json').read_text())['r2_central'] for t in ('level1_w5700','level1_w8550','level1_w12825')):.4f}), "
+                  f"so the wall-coupling layer carries a SLOW "
+                  f"FORMULATION-LEVEL MODE — classified by the "
+                  f"pre-registered falsifiability rule and characterized in "
+                  f"Limitation 3 **[machine]**.")
     else:
         att = reso.get("attribution", {})
         anch = reso.get("regression_anchor", {})
