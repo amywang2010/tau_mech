@@ -1,5 +1,5 @@
 {
-  "chain": "tissue shear -> condensate deformation (Taylor/Ca) -> bounded affine strain transfer -> APR rASA change (ensemble sensitivity)",
+  "chain": "tissue shear -> condensate deformation (MEASURED SPH D_inf(Ca); analytic Taylor reference) -> bounded affine strain transfer -> APR rASA change (ensemble sensitivity)",
   "physiology": {
     "tau_shear_Pa": [
       0.1,
@@ -16,6 +16,21 @@
       "tau_0.1_Pa": 0.0011704545454545453,
       "tau_1.0_Pa": 0.011704545454545452
     },
+    "D_SPH_measured": {
+      "tau_0.1_Pa": {
+        "D_upper": 0.01478822323046944,
+        "D_lower": 0.0,
+        "type": "monotonicity_bounded",
+        "note": "Ca below the measured SPH range; bounded above by the pre-registered monotonicity of D(Ca) using the tightest classified sweep point"
+      },
+      "tau_1.0_Pa": {
+        "D_upper": 0.01478822323046944,
+        "D_lower": 0.0,
+        "type": "monotonicity_bounded",
+        "note": "Ca below the measured SPH range; bounded above by the pre-registered monotonicity of D(Ca) using the tightest classified sweep point"
+      }
+    },
+    "D_SPH_note": "interpolated on the measured D_inf(Ca) curve where the trusted range permits; where the physiological Ca falls BELOW the measured range, D is reported as a monotonicity upper bound (type=monotonicity_bounded), never as an extrapolated point",
     "taylor_coefficient": 1.1704545454545454
   },
   "ensemble_sensitivity": {
@@ -84,25 +99,25 @@
   "predictions": {
     "affine_upper_bound_k1": {
       "apr1_vs_rg|tau_0.1_Pa": {
-        "D_taylor": 0.0011704545454545453,
+        "D_input": 0.0011704545454545453,
         "dRg_A": 0.07910502858990605,
         "dAPR_rASA": 3.8574790476409515e-05,
         "fraction_of_native_sd": 0.0004486114580362095
       },
       "apr1_vs_rg|tau_1.0_Pa": {
-        "D_taylor": 0.011704545454545452,
+        "D_input": 0.011704545454545452,
         "dRg_A": 0.7910502858990603,
         "dAPR_rASA": 0.0003857479047640951,
         "fraction_of_native_sd": 0.004486114580362095
       },
       "apr2_vs_rg|tau_0.1_Pa": {
-        "D_taylor": 0.0011704545454545453,
+        "D_input": 0.0011704545454545453,
         "dRg_A": 0.07910502858990605,
         "dAPR_rASA": 4.3322803552814474e-05,
         "fraction_of_native_sd": 0.0005684905348445589
       },
       "apr2_vs_rg|tau_1.0_Pa": {
-        "D_taylor": 0.011704545454545452,
+        "D_input": 0.011704545454545452,
         "dRg_A": 0.7910502858990603,
         "dAPR_rASA": 0.0004332280355281447,
         "fraction_of_native_sd": 0.005684905348445588
@@ -110,30 +125,157 @@
     },
     "compliant_k0.1": {
       "apr1_vs_rg|tau_0.1_Pa": {
-        "D_taylor": 0.0011704545454545453,
+        "D_input": 0.0011704545454545453,
         "dRg_A": 0.007910502858990604,
         "dAPR_rASA": 3.857479047640951e-06,
         "fraction_of_native_sd": 4.486114580362095e-05
       },
       "apr1_vs_rg|tau_1.0_Pa": {
-        "D_taylor": 0.011704545454545452,
+        "D_input": 0.011704545454545452,
         "dRg_A": 0.07910502858990605,
         "dAPR_rASA": 3.8574790476409515e-05,
         "fraction_of_native_sd": 0.0004486114580362095
       },
       "apr2_vs_rg|tau_0.1_Pa": {
-        "D_taylor": 0.0011704545454545453,
+        "D_input": 0.0011704545454545453,
         "dRg_A": 0.007910502858990604,
         "dAPR_rASA": 4.332280355281447e-06,
         "fraction_of_native_sd": 5.684905348445588e-05
       },
       "apr2_vs_rg|tau_1.0_Pa": {
-        "D_taylor": 0.011704545454545452,
+        "D_input": 0.011704545454545452,
         "dRg_A": 0.07910502858990605,
         "dAPR_rASA": 4.3322803552814474e-05,
         "fraction_of_native_sd": 0.0005684905348445589
       }
+    },
+    "sph_measured_affine_k1": {
+      "apr1_vs_rg|tau_0.1_Pa": {
+        "D_input": 0.01478822323046944,
+        "dRg_A": 0.9994602746285186,
+        "dAPR_rASA": 0.0004873769894346436,
+        "fraction_of_native_sd": 0.005668025649479165,
+        "input_type": "monotonicity_bounded"
+      },
+      "apr1_vs_rg|tau_1.0_Pa": {
+        "D_input": 0.01478822323046944,
+        "dRg_A": 0.9994602746285186,
+        "dAPR_rASA": 0.0004873769894346436,
+        "fraction_of_native_sd": 0.005668025649479165,
+        "input_type": "monotonicity_bounded"
+      },
+      "apr2_vs_rg|tau_0.1_Pa": {
+        "D_input": 0.01478822323046944,
+        "dRg_A": 0.9994602746285186,
+        "dAPR_rASA": 0.0005473662282715919,
+        "fraction_of_native_sd": 0.00718264965208492,
+        "input_type": "monotonicity_bounded"
+      },
+      "apr2_vs_rg|tau_1.0_Pa": {
+        "D_input": 0.01478822323046944,
+        "dRg_A": 0.9994602746285186,
+        "dAPR_rASA": 0.0005473662282715919,
+        "fraction_of_native_sd": 0.00718264965208492,
+        "input_type": "monotonicity_bounded"
+      }
+    },
+    "sph_measured_compliant_k0.1": {
+      "apr1_vs_rg|tau_0.1_Pa": {
+        "D_input": 0.01478822323046944,
+        "dRg_A": 0.09994602746285186,
+        "dAPR_rASA": 4.873769894346436e-05,
+        "fraction_of_native_sd": 0.0005668025649479165,
+        "input_type": "monotonicity_bounded"
+      },
+      "apr1_vs_rg|tau_1.0_Pa": {
+        "D_input": 0.01478822323046944,
+        "dRg_A": 0.09994602746285186,
+        "dAPR_rASA": 4.873769894346436e-05,
+        "fraction_of_native_sd": 0.0005668025649479165,
+        "input_type": "monotonicity_bounded"
+      },
+      "apr2_vs_rg|tau_0.1_Pa": {
+        "D_input": 0.01478822323046944,
+        "dRg_A": 0.09994602746285186,
+        "dAPR_rASA": 5.473662282715919e-05,
+        "fraction_of_native_sd": 0.0007182649652084919,
+        "input_type": "monotonicity_bounded"
+      },
+      "apr2_vs_rg|tau_1.0_Pa": {
+        "D_input": 0.01478822323046944,
+        "dRg_A": 0.09994602746285186,
+        "dAPR_rASA": 5.473662282715919e-05,
+        "fraction_of_native_sd": 0.0007182649652084919,
+        "input_type": "monotonicity_bounded"
+      }
     }
+  },
+  "sph_anchor": {
+    "used": true,
+    "reason_unavailable": null,
+    "note": "D_inf(Ca) interpolated in log-Ca over TRUSTED points of the canonical merged record; no extrapolation beyond the trusted range; similarity mapping justified by identical lambda = 10",
+    "trusted_points": [
+      [
+        0.054303931466583875,
+        0.047103762464958204,
+        0.003
+      ],
+      [
+        0.1945163209914265,
+        0.19871691449211545,
+        0.01
+      ],
+      [
+        0.5208078812214806,
+        0.8382008402468508,
+        0.03
+      ]
+    ],
+    "window_limited": [
+      [
+        0.02152516430694851,
+        [
+          0.01478822323046944,
+          0.01478822323046944
+        ],
+        0.001
+      ]
+    ],
+    "below_noise_floor": [],
+    "verdict_class": "FAIL",
+    "acceptance_version": "v1.4.1 (v1.2 below-noise-floor censoring pre-registered 2026-09-02 21:40; v1.3 pointwise A1b + one-sided A3 amended pre-registered 2026-09-02 23:15; v1.4 window-trust rule, extension protocol and A5 integrity check pre-registered 2026-09-03 ~09:20, all before wave-3 completion; v1.4.1 merge hardening - supersession requires a complete extension record+trace, 2026-09-03, before extension data existed)",
+    "ca_trusted_range": [
+      0.054303931466583875,
+      0.5208078812214806
+    ],
+    "turnover_points": [
+      [
+        1.7793904701931034,
+        0.688694255656119,
+        0.1
+      ]
+    ],
+    "a2_status": "fail_pre_declared_saturation; anchor restricted to the monotone-feasible prefix (Ca <= 0.520808)",
+    "a2_only_pre_declared": true,
+    "D_measured": {
+      "tau_0.1_Pa": {
+        "D_upper": 0.01478822323046944,
+        "D_lower": 0.0,
+        "type": "monotonicity_bounded",
+        "note": "Ca below the measured SPH range; bounded above by the pre-registered monotonicity of D(Ca) using the tightest classified sweep point"
+      },
+      "tau_1.0_Pa": {
+        "D_upper": 0.01478822323046944,
+        "D_lower": 0.0,
+        "type": "monotonicity_bounded",
+        "note": "Ca below the measured SPH range; bounded above by the pre-registered monotonicity of D(Ca) using the tightest classified sweep point"
+      }
+    },
+    "D_conservative_scalar": {
+      "tau_0.1_Pa": 0.01478822323046944,
+      "tau_1.0_Pa": 0.01478822323046944
+    },
+    "note_fail_a2": "verdict FAIL(A2 only): the pre-declared Taylor-saturation outcome (docs/A2_TAYLOR_SATURATION_PREDICTION.md); the anchor is restricted to the monotone-feasible prefix and the turnover points are reported separately"
   },
   "native_scale": {
     "apr1_rASA_sd": 0.08598708255306302,
@@ -145,7 +287,10 @@
     "note": "rsa_augment is the exposure-feature reference; the mechanical dAPR below is compared to the rASA scale this detector consumes"
   },
   "assumptions": [
-    "linear response; Taylor limit valid for Ca << 1",
+    "mechanical input: MEASURED D_inf(Ca) interpolated in log-Ca over trusted SPH points; the dimensionless transfer is justified by the identical viscosity ratio lambda = 10 between the SPH prototype and the physiological condensate; no extrapolation beyond the trusted Ca range",
+    "where the physiological Ca (1e-3..1e-2) falls below the measured range, D is bounded from above via the pre-registered monotonicity of D(Ca) using the tightest classified sweep point (censored bound / interval hi / trusted plateau); the bound is parameter-free and labeled, never an extrapolated point estimate",
+    "a merged verdict FAIL is accepted ONLY as the pre-declared A2 saturation outcome (every integrity check passing); in that case the anchor is restricted to the monotone-feasible prefix and the excluded turnover points are reported separately (docs/A2_TAYLOR_SATURATION_PREDICTION.md)",
+    "the analytic Taylor law (valid Ca << 1, Newtonian) is retained only as the labeled reference curve",
     "affine strain transfer is an UPPER bound (k <= 1); k = 0.1 shown as a compliant-chain illustration",
     "ensemble (equilibrium) sensitivity proxies the driven response (fluctuation-dissipation-style assumption; stated, not proven)",
     "static-ensemble analysis; no re-equilibration under shear",
@@ -275,6 +420,260 @@
       0.003052169587047701,
       0.0034312796784703287,
       0.0038574790476409524
-    ]
+    ],
+    "dAPR1_rASA_affine_measured": [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      0.001650976009225751,
+      0.0021094847039996646,
+      0.0025679933987735816,
+      0.0030265020935474948,
+      0.003485010788321408,
+      0.00394351948309532
+    ],
+    "dAPR1_rASA_affine_bound_below": [
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0004873769894346436,
+      0.0015524035297164727,
+      0.0015524035297164727,
+      0.0015524035297164727,
+      0.0015524035297164727,
+      0.0015524035297164727,
+      0.0015524035297164727,
+      0.0015524035297164727,
+      0.0015524035297164727,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "sph_D_on_axis": [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      0.050094695280754505,
+      0.06400698305472842,
+      0.07791927082870245,
+      0.09183155860267636,
+      0.10574384637665027,
+      0.11965613415062418
+    ],
+    "sph_D_bound_below": [
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.01478822323046944,
+      0.047103762464958204,
+      0.047103762464958204,
+      0.047103762464958204,
+      0.047103762464958204,
+      0.047103762464958204,
+      0.047103762464958204,
+      0.047103762464958204,
+      0.047103762464958204,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "sph_trusted_Ca_nodes": [
+      0.054303931466583875,
+      0.1945163209914265,
+      0.5208078812214806
+    ],
+    "refusal": "Ca < 0.0543: below the measured range - D = 0 within the control noise floor and bounded above by monotonicity (dotted); Ca > 0.5208: outside the measured range - no extrapolation"
   }
 }
