@@ -718,7 +718,8 @@ def _binned_profile(y, ux, n_bins: int):
 
 def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
                      U_wall: float = 2.0, domain=(0.0, 0.0, 24.0, 8.0),
-                     spacing: float = 0.5, n_wall_layers: int = 4) -> Dict:
+                     spacing: float = 0.5, n_wall_layers: int = 4,
+                     init: str = "rest", u_profile: Optional[np.ndarray] = None) -> Dict:
     """Steady-state Couette validation (planar Couette, periodic x).
 
     The no-slip planes are the innermost frozen wall rows (the lattice
@@ -736,7 +737,11 @@ def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
     :func:`_lattice_row_profile`), not fixed-width bins.
 
     The caller must pass a configuration whose viscosity reaches steady state
-    within n_steps*dt (viscous time tau = H_wall**2/(nu*pi**2)).
+    within n_steps*dt (viscous time tau = H_wall**2/(nu*pi**2)), or use
+    ``init="analytic"`` to initialize the fluid AT the analytic steady
+    profile (u(y,0) = -U_wall + (2*U_wall/H_wall)*(y - y_bottom_inner)),
+    which converts the run into a fixed-point test of the discrete dynamics
+    (no start-up transient; residual drift = discretization error only).
     """
     x0, y0, x1, y1 = domain
     m = particle_mass(spacing, 1.0)
@@ -744,7 +749,21 @@ def validate_couette(params: SPHParams, n_steps: int = 6000, dt: float = 0.008,
         x0, y0, x1, y1, spacing, n_wall_layers)
     H_wall = inner_top - inner_bottom
     phase = np.where(fluid, np.int8(0), np.int8(2))
-    state = SPHState(pos=pos, vel=np.zeros_like(pos), mass=np.full(len(pos), m),
+    if init == "rest":
+        vel0 = np.zeros_like(pos)
+    elif init == "analytic":
+        # Exact steady Couette profile between the innermost wall rows:
+        # u = -U at the bottom no-slip plane, +U at the top. The u_profile
+        # override exists ONLY for unit-testing this branch with a known
+        # field; production runs always use the analytic form.
+        vel0 = np.zeros_like(pos)
+        if u_profile is not None:
+            vel0[:, 0] = u_profile
+        else:
+            vel0[:, 0] = -U_wall + (2.0 * U_wall / H_wall) * (pos[:, 1] - inner_bottom)
+    else:
+        raise ValueError(f"unknown init={init!r} (expected 'rest' or 'analytic')")
+    state = SPHState(pos=pos, vel=vel0, mass=np.full(len(pos), m),
                      phase=phase, h=params.h, rho0=1.0, domain=domain,
                      wall_speed_top=U_wall, wall_speed_bottom=-U_wall)
     run(state, params, n_steps, dt)
