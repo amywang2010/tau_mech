@@ -450,17 +450,38 @@ def main() -> None:
     A("2. The Laplace calibration carries a documented discretization "
       "uncertainty (sigma_eff = 106.4% of input, converging as h/R -> 0).")
     A("3. Wall slip at the frozen-lattice walls attenuates the applied "
-      "shear; its attribution (boundary-discretization vs formulation "
-      "property) is decided by the co-refined resolution study v2 (v1 "
-      "retained as fixed-h control). The sweep protocol uses the "
-      "*measured* local shear rate, so deformation magnitudes do not "
-      "depend on the nominal rate regardless of the attribution.")
+      "shear. Resolution study v2.1 (pre-registered A3 amendment; "
+      "analytic steady-IC fixed-point test at the designed nu = 0.5) "
+      "established: the slip metric is INITIAL-CONDITION-INDEPENDENT "
+      "(rest-IC vs analytic-IC agree to 9e-4 at t = 3*tau), so the v1/v2 "
+      "start-up transient is quantified as small; but the slip metric "
+      "still creeps (0.865 -> 0.896 -> 0.910 over windows 1.5x apart, "
+      "r2_central >= 0.9996 throughout), so the pre-registered falsifiability "
+      "rule classifies the wall-coupling layer as carrying a SLOW "
+      "FORMULATION-LEVEL MODE: the discrete solver does not hold the "
+      "continuum steady state exactly, and h-convergence of the wall "
+      "layer is NOT established (documented limitation; protocol retained). "
+      "The sweep protocol uses the *measured* local shear rate, so "
+      "deformation magnitudes do not depend on the nominal rate and no "
+      "downstream claim consumes the slip number **[machine/ref]**.")
+    A("3b. Honesty caveat on the dissipation diagnostic (item 5): its "
+      "wall-layer numbers (no_dissipators slip_frac) derive from the same "
+      "wall-coupling formulation now shown to carry a slow mode, so the "
+      "quantitative slip-residual interpretation is APPROXIMATE. The "
+      "qualitative mechanism attribution (disabling XSPH+AV recovers the "
+      "bulk slope) rests on the central-zone slope ratio (R2 >= 0.994, "
+      "t/tau = 3.16), which is unaffected by the wall-layer mode "
+      "**[ref]**.")
     A("4. Mutation analysis is static-packing (mutate-and-recompute SASA on "
       "fixed conformers); conformational-redistribution effects require MD "
       "follow-up and are flagged as such.")
     A("5. The GNN classifies APRs on structural features of PED ensembles; "
       "causal claims are limited to exposure correlations, not aggregation "
       "kinetics.")
+    A("6. Seed robustness is established at n = 3 (GAT, GraphSAGE) and "
+      "n = 5 (GCN) on a single stratified split; split-level variance "
+      "(resampling the partition itself) is not exhaustively sampled and "
+      "is flagged for future work **[machine]**.")
     A("")
     A("---")
     A(f"*Records inventory: {len(list((OUT / 'sph' / 'sweep').glob('rate_*')))} "
