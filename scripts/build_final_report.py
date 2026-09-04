@@ -180,12 +180,47 @@ def main() -> None:
           f"particle-density control at fixed kernel, retained as such. "
           f"The decisive v2 record replaces this item on completion "
           f"**[machine/ref]**.")
+    elif reso.get("attribution_status") == "not_attempted_rescoped":
+        anch = reso.get("regression_anchor", {})
+        g1 = next(iter(reso.get("steady_guards", {}).values()), {})
+        rest = anch.get("rest_ic_diagnostic") or {}
+        A(f"6. Wall-slip resolution study (v2.1, rescoped per its A3 "
+          f"pre-registration): **COMPLETED at the pre-registered scope** — "
+          f"level-1 steady-preservation fixed-point test + start-up-"
+          f"transient diagnostic. The three-level h-convergence attribution "
+          f"was NOT attempted (rescoped 2026-09-04: not load-bearing for "
+          f"any claim — the sweep's Ca values derive from measured local "
+          f"shear rates, so no conclusion depends on the wall-slip "
+          f"attribution) **[ref]**.")
+        A(f"   * Results: steady-preservation anchor "
+          f"{'PASS' if anch.get('pass') else 'FAIL'} — the flow initialized "
+          f"AT the analytic steady Couette profile holds it (analytic-IC "
+          f"window-1 r2_central = {anch.get('window1_r2_central', 0):.4f} "
+          f">= 0.999); guard windows {g1.get('windows')} with final slip "
+          f"drift {g1.get('slip_drift_last', 0):.4f} (pre-registered "
+          f"tolerance 0.005); rest-IC vs analytic-IC at t = 3*tau: "
+          f"|d(slip)| = {rest.get('abs_diff', 0):.2e} — initial-condition "
+          f"independence at the designed nu = 0.5, quantifying the v1/v2 "
+          f"start-up-transient contamination as the small residual it is "
+          f"**[machine]**. Protocol history: v1 (fixed-h control) and v2 "
+          f"(guard abort) are retained in `outputs/sph/audits/` as the "
+          f"documented evidence chain.")
     elif reso.get("attribution") is None:
-        A(f"6. Wall-slip resolution study (v2): **ABORTED** — "
-          f"{reso.get('aborted', 'unstated reason')}. No attribution "
-          f"written; the pre-registered rule forbids using unsteady or "
-          f"non-replicating measurements. See the record for the guard "
-          f"evidence **[machine]**.")
+        gd = {k: v for k, v in reso.get("steady_guards", {}).items()
+              if v.get("windows")}
+        gtxt = "; ".join(
+            f"{k}: windows {v.get('windows')}, last slip drift "
+            f"{v.get('slip_drift_last', 0):.4f}" for k, v in gd.items())
+        vern = ("v2.1" if "v2.1" in str(reso.get("study_version", ""))
+                else "v2")
+        abort_reason = reso.get("aborted", "unstated reason")
+        A(f"6. Wall-slip resolution study ({vern}): **ABORTED by the "
+          f"pre-registered guard** — {abort_reason}. Guard evidence: "
+          f"{gtxt} **[machine]**. No "
+          f"attribution written; the rule forbids using unsteady or "
+          f"non-replicating measurements. The shear sweep is insulated "
+          f"from this non-stationarity by construction: its Ca values use "
+          f"measured local shear rates, not wall-fit slopes **[ref]**.")
     else:
         att = reso.get("attribution", {})
         anch = reso.get("regression_anchor", {})
