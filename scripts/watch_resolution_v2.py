@@ -90,8 +90,10 @@ def main() -> None:
 
     rec = json.loads(REC.read_text())
     attr = rec.get("attribution")
+    rescoped_done = (rec.get("attribution_status")
+                     == "not_attempted_rescoped")
 
-    if attr is None:
+    if attr is None and not rescoped_done:
         log(f"study ABORTED: {rec.get('aborted', 'unstated')!r}; "
             "committing the abort record (data preservation)")
         sh(["git", "add", str(REC.relative_to(ROOT))])
@@ -104,6 +106,54 @@ def main() -> None:
         log(f"commit rc={c.returncode}")
         p = sh(["git", "push"])
         log(f"push rc={p.returncode}")
+        return
+
+    if rescoped_done:
+        log("study COMPLETED at rescoped scope (attribution deliberately "
+            "not attempted); waiting for seed_polish.json before the "
+            "strict report build (it consumes that record)")
+        seed_rec = ROOT / "outputs/gnn/seed_polish.json"
+        deadline = time.time() + 2 * 3600  # documented 2 h cap
+        while not seed_rec.exists() and time.time() < deadline:
+            time.sleep(POLL_S)
+        if not seed_rec.exists():
+            log("seed_polish.json still absent after 2 h - building "
+                "report anyway (build will fail loudly if it consumes "
+                "the missing record; data already preserved)")
+        b = sh([str(ROOT / ".venv/Scripts/python.exe"),
+                "scripts/build_final_report.py"])
+        log(f"report build rc={b.returncode}"
+            + ("" if b.returncode == 0 else f" stderr={b.stderr[-400:]!r}"))
+        if b.returncode == 0:
+            t = sh([str(ROOT / ".venv/Scripts/python.exe"), "-m",
+                    "pytest", "tests/", "-q"])
+            log(f"pytest rc={t.returncode}")
+            sh(["git", "add", str(REC.relative_to(ROOT)),
+                str(REPORT.relative_to(ROOT)),
+                "outputs/sph/audits/res_v21_fragments",
+                str(seed_rec.relative_to(ROOT))])
+            c = sh(["git", "commit", "-m",
+                    "Resolution study v2.1 (rescoped, level-1) complete: "
+                    "steady-preservation + transient diagnostic; report "
+                    "regenerated (strict)\n\n"
+                    "\U0001F916 Generated with Codebuff\n"
+                    "Co-Authored-By: Codebuff <noreply@codebuff.com>"])
+            log(f"commit rc={c.returncode}")
+            p = sh(["git", "push"])
+            log(f"push rc={p.returncode}")
+        else:
+            log("report build FAILED; committing the raw record + "
+                "fragments only (data preservation; review in the "
+                "morning)")
+            sh(["git", "add", str(REC.relative_to(ROOT)),
+                "outputs/sph/audits/res_v21_fragments"])
+            sh(["git", "commit", "-m",
+                "Resolution study v2.1 record + fragments (report build "
+                "pending review)\n\n"
+                "\U0001F916 Generated with Codebuff\n"
+                "Co-Authored-By: Codebuff <noreply@codebuff.com>"])
+            sh(["git", "push"])
+        log("watcher done")
         return
 
     log(f"attribution present: monotone="
